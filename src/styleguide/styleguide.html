@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design System - Style Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../index.css" />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+
+      .container {
+        width: 100%;
+        padding: 2rem;
+      }
+
+      .flex {
+        display: flex;
+        gap: 4rem;
+      }
+
+      .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--color-brown-600);
+        margin-bottom: 1.5rem;
+      }
+
+      .color-group {
+        margin-bottom: 2rem;
+      }
+
+      .color-group-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--color-brown-400);
+        margin-bottom: 0.75rem;
+      }
+
+      .color-swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .color-swatch {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .color-box {
+        width: 80px;
+        height: 60px;
+        border-radius: 4px;
+        border: 2px solid var(--color-brown-300);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .color-label {
+        font-size: 0.75rem;
+        color: var(--color-brown-600);
+        font-weight: 500;
+      }
+
+      .color-code {
+        font-size: 0.75rem;
+        color: var(--color-brown-400);
+        font-family: monospace;
+      }
+
+      .typography-group {
+        margin-bottom: 2rem;
+      }
+
+      .typography-group-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--color-brown-400);
+        margin-bottom: 0.75rem;
+      }
+
+      .typography-item {
+        margin-bottom: 1.5rem;
+      }
+
+      .typography-label {
+        font-size: 0.75rem;
+        color: var(--color-brown-400);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+
+      .headline-2-outline {
+        padding: 0.5rem;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="headline-1">Design System</h1>
+
+      <div class="flex">
+        <!-- Colors Section -->
+        <section>
+          <h2 class="section-title">Colors</h2>
+
+          <!-- Base Colors -->
+          <div class="color-group">
+            <h3 class="color-group-title">Base</h3>
+            <div class="color-swatches">
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #26231e"></div>
+                <span class="color-label">Brown 600</span>
+                <span class="color-code">#26231E</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #43403b"></div>
+                <span class="color-label">Brown 500</span>
+                <span class="color-code">#43403B</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #75716b"></div>
+                <span class="color-label">Brown 400</span>
+                <span class="color-code">#75716B</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #dad6d1"></div>
+                <span class="color-label">Brown 300</span>
+                <span class="color-code">#DAD6D1</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #efeeeb"></div>
+                <span class="color-label">Brown 200</span>
+                <span class="color-code">#EFEEEB</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #f9f8f6"></div>
+                <span class="color-label">Brown 100</span>
+                <span class="color-code">#F9F8F6</span>
+              </div>
+              <div class="color-swatch">
+                <div
+                  class="color-box"
+                  style="
+                    background-color: #ffffff;
+                    border: 1px solid var(--color-brown-300);
+                  "
+                ></div>
+                <span class="color-label">White</span>
+                <span class="color-code">#FFFFFF</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Colors -->
+          <div class="color-group">
+            <h3 class="color-group-title">Brand</h3>
+            <div class="color-swatches">
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #f2b68c"></div>
+                <span class="color-label">Orange</span>
+                <span class="color-code">#F2B68C</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #12b279"></div>
+                <span class="color-label">Green</span>
+                <span class="color-code">#12B279</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #d7f2e9"></div>
+                <span class="color-label">Green</span>
+                <span class="color-code">#D7F2E9</span>
+              </div>
+              <div class="color-swatch">
+                <div class="color-box" style="background-color: #eb5164"></div>
+                <span class="color-label">Red</span>
+                <span class="color-code">#EB5164</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section>
+          <h2 class="section-title">Fonts</h2>
+
+          <!-- Headlines -->
+          <div class="typography-group">
+            <div class="typography-item">
+              <h1 class="headline-1">Headline 1</h1>
+            </div>
+
+            <div class="typography-item">
+              <h2 class="headline-2">Headline 2</h2>
+            </div>
+
+            <div class="typography-item">
+              <h3 class="headline-3">Headline 3</h3>
+            </div>
+
+            <div class="typography-item">
+              <h4 class="headline-4">Headline 4</h4>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="typography-group">
+            <div class="typography-item">
+              <p class="body-1">Body 1</p>
+            </div>
+
+            <div class="typography-item">
+              <p class="body-2">Body 2</p>
+            </div>
+
+            <div class="typography-item">
+              <p class="body-3">Body 3</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
