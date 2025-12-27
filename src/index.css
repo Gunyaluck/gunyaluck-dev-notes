@@ -34,8 +34,6 @@
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
@@ -82,20 +80,20 @@ body {
     font-size: var(--font-size-body-1);
     font-weight: var(--font-weight-body);
     line-height: 1.5rem;
-    color: var(--color-brown-600);
+    color: var(--color-brown-400);
   }
 
   .body-2 {
     font-size: var(--font-size-body-2);
     font-weight: var(--font-weight-body);
     line-height: 1.375rem;
-    color: var(--color-brown-600);
+    color: var(--color-brown-400);
   }
 
   .body-3 {
     font-size: var(--font-size-body-3);
     font-weight: var(--font-weight-body);
     line-height: 1.25rem;
-    color: var(--color-brown-600);
+    color: var(--color-brown-400);
   }
 }
