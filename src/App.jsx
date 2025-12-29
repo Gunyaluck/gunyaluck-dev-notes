@@ -1,11 +1,11 @@
 import "./App.css";
+import { NavBar, HeroSection } from "./components/landing-page/NavBar-HeroSection";
 
 function App() {
   return (
     <>
-      <section>
-        <h1>My First React App on Vite</h1>
-      </section>
+      <NavBar />
+      <HeroSection />
     </>
   );
 }
