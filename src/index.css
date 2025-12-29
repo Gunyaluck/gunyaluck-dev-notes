@@ -90,6 +90,27 @@ body {
     color: var(--color-brown-600);
   }
 
+  .body-1-brown-500 {
+    font-size: var(--font-size-body-1);
+    font-weight: var(--font-weight-body);
+    line-height: 1.5rem;
+    color: var(--color-brown-500);
+  }
+
+  .body-1-brown-400 {
+    font-size: var(--font-size-body-1);
+    font-weight: var(--font-weight-body);
+    line-height: 1.5rem;
+    color: var(--color-brown-400);
+  }
+
+  .body-1-brown-300 {
+    font-size: var(--font-size-body-1);
+    font-weight: var(--font-weight-body);
+    line-height: 1.5rem;
+    color: var(--color-brown-300);
+  }
+
   .body-1-white {
     font-size: var(--font-size-body-1);
     font-weight: var(--font-weight-body);
