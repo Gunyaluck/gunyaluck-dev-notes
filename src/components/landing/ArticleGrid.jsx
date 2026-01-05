@@ -1,9 +1,8 @@
-
 import { CategoryTab } from "./CategoryTab";
 import { SearchBar } from "./SearchBar";
 import { ArticleCard } from "./ArticleCard";
 
-export function ArticleSection() {
+export function ArticleGrid() {
   return (
     <section className="w-full lg:w-full lg:flex lg:flex-col lg:items-center lg:px-30">
       {/* Heading */}

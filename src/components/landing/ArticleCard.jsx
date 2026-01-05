@@ -8,6 +8,7 @@ import heroSectionProfileImage from "../../assets/images/herosection-pic.jpg";
 
 export function ArticleCard() {
   // Sample article data - replace with actual data later
+
   const articles = [
     {
       id: 1,
@@ -27,7 +28,7 @@ export function ArticleCard() {
       description: "Cats have captivated human hearts for thousands of years. Whether lounging in a sunny spot or playfully chasing a string, these furry companions bring warmth and joy to millions of homes. But what makes cats so special? Let’s dive into the unique traits, behaviors, and quirks that make cats endlessly fascinating.",
       author: "Thompson P.",
       date: "1 September 2024",
-      authorAvatar: heroSectionProfileImage 
+      authorAvatar: heroSectionProfileImage,
     },
     {
       id: 3,
@@ -77,15 +78,15 @@ export function ArticleCard() {
       {articles.map((article) => (
         <article
           key={article.id}
-          className="w-full bg-white rounded-lg flex flex-col gap-4 overflow-hidden cursor-pointer"
+          className="group w-full bg-white rounded-lg flex flex-col gap-4 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]"
         >
           {/* Article Image */}
-          <div className="w-full h-[212px] bg-brown-300 rounded-2xl overflow-hidden lg:h-[360px]">
+          <div className="w-full h-[212px] bg-brown-300 rounded-2xl overflow-hidden lg:h-[360px] group">
             {article.image ? (
               <img
                 src={article.image}
                 alt={article.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
@@ -98,13 +99,13 @@ export function ArticleCard() {
           <div className="flex flex-col gap-4 px-4 pb-4">
             {/* Category Tag */}
             <div className="w-fit">
-              <span className="px-3 py-1 rounded-full bg-brand-green-soft body-2-green-600 font-medium">
+              <span className="px-3 py-1 rounded-full bg-brand-green-soft body-2-green-600 font-medium transition-colors duration-300 group-hover:bg-brand-green group-hover:text-white">
                 {article.category}
               </span>
             </div>
 
             {/* Title */}
-            <h3 className="text-headline-4">
+            <h3 className="text-headline-4 transition-colors duration-300 group-hover:text-brand-green">
               {article.title}
             </h3>
 
@@ -119,15 +120,15 @@ export function ArticleCard() {
                 <img
                   src={article.authorAvatar}
                   alt={article.author}
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-8 h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110 ring-2 ring-transparent group-hover:ring-brand-green"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-brown-300 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-brown-300 flex items-center justify-center transition-all duration-300 group-hover:bg-brand-green group-hover:text-white">
                   <span className="body-3">TP</span>
                 </div>
               )}
               <div className="flex flex-row gap-4 items-center">
-                <span className="body-1-brown-600">{article.author}</span>
+                <span className="body-1-brown-600 transition-colors duration-300 group-hover:text-brand-green">{article.author}</span>
                 <span className="w-px h-4 bg-brown-300"></span>
                 <span className="body-2">{article.date}</span>
               </div>

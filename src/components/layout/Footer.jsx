@@ -1,5 +1,5 @@
 /* Footer */
-import { Linkedin, Github, Globe } from 'lucide-react';
+import { Linkedin, Github } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -31,7 +31,7 @@ export function Footer() {
               className="w-6 h-6 rounded-full bg-brown-500 flex items-center justify-center hover:bg-brown-500 transition-colors"
               aria-label="Google"
             >
-              <Globe className="w-4 h-4 text-white" />
+              <span className="text-white text-sm">G</span>
             </a>
           </div>
         </div>
