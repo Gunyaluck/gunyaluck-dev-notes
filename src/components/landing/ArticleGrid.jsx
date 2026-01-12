@@ -1,8 +1,16 @@
+import { useState } from "react";
 import { CategoryTab } from "./CategoryTab";
 import { SearchBar } from "./SearchBar";
 import { ArticleCard } from "./ArticleCard";
 
 export function ArticleGrid() {
+  const [selectedCategory, setSelectedCategory] = useState("highlight");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
   return (
     <section className="w-full lg:w-full lg:flex lg:flex-col lg:items-center lg:px-30">
       {/* Heading */}
@@ -13,13 +21,13 @@ export function ArticleGrid() {
       {/* Search and Filter Section */}
       <div className="w-full bg-brown-200 flex flex-col gap-4 px-4 py-4 lg:h-[80px] lg:w-full lg:flex-row lg:justify-between lg:items-center lg:px-8 lg:py-6 lg:rounded-lg">
         {/* Search Bar - Mobile: Top, Desktop: Right */}
-        <SearchBar />
+        <SearchBar onSearch={handleSearch} />
         {/* Category Filter - Mobile: Bottom, Desktop: Left */}
         <div className="lg:flex lg:items-center lg:order-1">
-          <CategoryTab />
+          <CategoryTab selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
         </div>
       </div>
-      <ArticleCard />
+      <ArticleCard selectedCategory={selectedCategory} searchQuery={searchQuery} />
     </section>
   );
 }
