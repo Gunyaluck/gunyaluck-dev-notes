@@ -7,21 +7,19 @@ import {
     SelectValue,
   } from "../ui/select";
   import { SelectLabel } from "@radix-ui/react-select";
+  import { categories } from "../../data/categories";
   
-export function CategoryTab() {
-    const categories = [
-      { value: "highlight", label: "Highlight" },
-      { value: "cat", label: "Cat" },
-      { value: "inspiration", label: "Inspiration" },
-      { value: "general", label: "General" }
-    ];
+export function CategoryTab({ selectedCategory, onCategoryChange }) {
+    const handleCategoryChange = (value) => {
+      onCategoryChange(value);
+    };
 
     return (
       <>
         {/* Mobile: Dropdown Select */}
         <div className="w-full h-[76px] flex flex-col gap-2 lg:hidden">
           <label className="body-1-brown-400 font-medium">Category</label>
-          <Select defaultValue="highlight">
+          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
             <SelectTrigger className="w-full h-[48px] rounded-lg border-2 border-brown-300 bg-white body-1-brown-500 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green active:scale-[0.98]">
               <SelectValue className="body-1-brown-500" placeholder="Highlight" />
             </SelectTrigger>
@@ -44,14 +42,23 @@ export function CategoryTab() {
   
         {/* Desktop: Category Tabs */}
         <div className="hidden lg:flex items-center gap-2 rounded-[16px]">
-          {categories.map((category) => (
-            <button
-              key={category.value}
-              className="px-4 py-2 rounded-lg body-1-brown-400 bg-transparent hover:bg-brown-300 hover:text-brown-600 transition-colors cursor-pointer"
-            >
-              {category.label}
-            </button>
-          ))}
+          {categories.map((category) => {
+            const isSelected = selectedCategory === category.value;
+            return (
+              <button
+                key={category.value}
+                onClick={() => handleCategoryChange(category.value)}
+                disabled={isSelected}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  isSelected
+                    ? "body-1-green-600 bg-brown-200"
+                    : "body-1-brown-400 bg-transparent hover:bg-brown-300 hover:text-brown-600 cursor-pointer"
+                }`}
+              >
+                {category.label}
+              </button>
+            );
+          })}
         </div>
       </>
     );
