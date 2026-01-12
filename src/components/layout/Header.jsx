@@ -1,12 +1,29 @@
 /* NavBar*/
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo/logo.svg";
 
 function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLandingPage = () => {
+    navigate("/");
+    setIsMenuOpen(false);
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSignUpClick = () => {
+    navigate("/signup");
+    setIsMenuOpen(false);
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login");
+    setIsMenuOpen(false);
   };
 
   return (
@@ -16,7 +33,12 @@ function NavBar() {
         <div className="w-full h-[48px] flex items-center justify-between lg:w-auto lg:h-auto">
           {/* Logo Section */}
           <div className="w-[24px] h-[24px] flex items-center gap-1 lg:w-[44px] lg:h-[44px]">
-            <img src={logo} alt="Logo" className="w-full h-full" />
+            <img
+              onClick={handleLandingPage}
+              src={logo}
+              alt="Logo"
+              className="w-full h-full cursor-pointer"
+            />
           </div>
 
           {/* Hamburger Menu */}
@@ -34,10 +56,13 @@ function NavBar() {
         {/* Mobile: login and signup Buttons - Show when menu is open */}
         {isMenuOpen && (
           <div className="w-full flex flex-col gap-4 py-4 border-t border-brown-300 lg:hidden">
-            <button className="w-full h-[48px] px-6 py-3 border border-brown-400 rounded-[999px] body-1-brown-600 hover:bg-brown-600 transition-colors hover:text-white cursor-pointer">
+            <button onClick={handleLoginClick} className="w-full h-[48px] px-6 py-3 border border-brown-400 rounded-[999px] body-1-brown-600 hover:bg-brown-600 transition-colors hover:text-white cursor-pointer">
               Log in
             </button>
-            <button className="w-full h-[48px] px-10 py-3 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-200 transition-colors hover:text-brown-600 cursor-pointer">
+            <button
+              onClick={handleSignUpClick}
+              className="w-full h-[48px] px-10 py-3 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-200 transition-colors hover:text-brown-600 cursor-pointer"
+            >
               Sign up
             </button>
           </div>
@@ -45,10 +70,16 @@ function NavBar() {
 
         {/* Desktop: login and signup Buttons */}
         <div className="hidden lg:w-[276px] lg:h-[48px] lg:flex items-center gap-2">
-          <button className="w-[127px] h-[48px] px-6 py-3 border border-brown-400 rounded-[999px] body-1-brown-600 hover:bg-brown-600 transition-colors hover:text-white cursor-pointer">
+          <button
+            onClick={handleLoginClick}
+            className="w-[127px] h-[48px] px-6 py-3 border border-brown-400 rounded-[999px] body-1-brown-600 hover:bg-brown-600 transition-colors hover:text-white cursor-pointer"
+          >
             Log in
           </button>
-          <button className="w-[141px] h-[48px] px-10 py-3 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-200 transition-colors hover:text-brown-600 cursor-pointer">
+          <button
+            onClick={handleSignUpClick}
+            className="w-[141px] h-[48px] px-10 py-3 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-200 transition-colors hover:text-brown-600 cursor-pointer"
+          >
             Sign up
           </button>
         </div>
