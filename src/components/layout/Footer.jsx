@@ -19,7 +19,7 @@ export function Footer() {
             </a>
             {/* GitHub Icon */}
             <a
-              href="#"
+              href="https://github.com/Gunyaluck/gunyaluck-dev-notes"
               className="w-6 h-6 rounded-full bg-brown-500 flex items-center justify-center hover:bg-brown-500 transition-colors"
               aria-label="GitHub"
             >

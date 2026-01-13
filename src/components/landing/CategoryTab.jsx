@@ -1,3 +1,4 @@
+import React from "react";
 import {
     Select,
     SelectContent,
@@ -51,7 +52,7 @@ export function CategoryTab({ selectedCategory, onCategoryChange }) {
                 disabled={isSelected}
                 className={`px-4 py-2 rounded-lg transition-colors ${
                   isSelected
-                    ? "body-1-green-600 bg-brown-200"
+                    ? "body-1-green-600 bg-brand-green-soft"
                     : "body-1-brown-400 bg-transparent hover:bg-brown-300 hover:text-brown-600 cursor-pointer"
                 }`}
               >
