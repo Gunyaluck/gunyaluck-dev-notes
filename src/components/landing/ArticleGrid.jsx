@@ -4,7 +4,7 @@ import { SearchBar } from "./SearchBar";
 import { ArticleCard } from "./ArticleCard";
 
 export function ArticleGrid() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query) => {
