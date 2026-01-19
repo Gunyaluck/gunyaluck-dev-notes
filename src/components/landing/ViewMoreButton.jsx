@@ -1,4 +1,4 @@
-export function ViewmoreButton({ onLoadMore, isLoading = false }) {
+export function ViewMoreButton({ onLoadMore, isLoading = false }) {
     return (
         <div className="w-full flex justify-center pt-20 lg:col-span-2">
             <button 
