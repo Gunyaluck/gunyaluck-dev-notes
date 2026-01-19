@@ -38,7 +38,7 @@ export function Footer() {
 
         {/* Right Section - Home page link */}
         <a
-          href="#"
+          href="/"
           className="body-1-brown-600 underline hover:text-brown-500 transition-colors"
         >
           Home page

@@ -1,52 +1,58 @@
 import { useEffect, useState, useMemo } from "react";
 import { formatDate } from "../../lib/utils";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ViewmoreButton } from "./ViewmoreButton";
 
 export function ArticleCard({ selectedCategory, searchQuery }) {
   const [articles, setArticles] = useState([]);
   const [page, setPage] = useState(1);
+  const [displayCount, setDisplayCount] = useState(6);
   const [hasMore, setHasMore] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const navigate = useNavigate();
 
-  const fetchArticlesData = async () => {
-    setIsLoading(true);
-
+  const fetchArticlesData = async (pageNum = 1, append = false) => {
     try {
       const categoryParam = selectedCategory === "All" ? undefined : selectedCategory;
 
       const response = await axios.get("https://blog-post-project-api.vercel.app/posts",
         {
           params: {
-            page: page,
+            page: pageNum,
             limit: 6,
             category: categoryParam,
           },
         }
       );
-      setArticles(prevArticles => [...prevArticles, ...response.data.posts]);
-
-      if (response.data.currentPage === response.data.totalPages) {
-        setHasMore(false);
+      
+      if (append) {
+        setArticles(prevArticles => [...prevArticles, ...response.data.posts]);
+      } else {
+        setArticles(response.data.posts);
+        setDisplayCount(6); // Reset display count when fetching new category
       }
+
+      setHasMore(response.data.currentPage < response.data.totalPages);
     } catch (error) {
       console.error("Error fetching articles:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchArticlesData();
-  }, [page, selectedCategory]);
-
-  useEffect(() => {
+    fetchArticlesData(1, false);
     setPage(1);
-    setArticles([]);
+    setDisplayCount(6);
     setHasMore(true);
   }, [selectedCategory]);
 
-  const handleLoadMore = () => {
-    setPage(prevPage => prevPage + 1);
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    const nextPage = page + 1;
+    await fetchArticlesData(nextPage, true);
+    setPage(nextPage);
+    setDisplayCount(prev => prev + 6);
+    setIsLoadingMore(false);
   };
 
   const filteredArticles = useMemo(() => {
@@ -75,13 +81,17 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
     return filtered;
   }, [articles, selectedCategory, searchQuery]);
 
+  // Show articles based on displayCount
+  const displayedArticles = filteredArticles.slice(0, displayCount);
+
   return (
     <div className="w-full mt-6 mb-30 px-4 py-0 flex flex-col gap-12 lg:w-full lg:grid lg:grid-cols-2 lg:gap-6">
       {/* Article Cards */}
-      {Array.isArray(filteredArticles) && filteredArticles.length > 0 && filteredArticles.map((article) => (
+      {Array.isArray(displayedArticles) && displayedArticles.length > 0 && displayedArticles.map((article) => (
         <article
           key={article.id}
           className="group w-full bg-white rounded-lg flex flex-col gap-4 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]"
+          onClick={() => navigate(`/post/${article.id}`)}
         >
           {/* Article Image */}
           <div className="w-full h-[212px] bg-brown-300 rounded-2xl overflow-hidden lg:h-[360px] group">
@@ -99,7 +109,8 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
           </div>
 
           {/* Article Content */}
-          <div className="flex flex-col gap-4 px-4 pb-4">
+          <div className="flex flex-col gap-4 px-4 pb-4"
+            >
             {/* Category Tag */}
             <div className="w-fit">
               <span className="px-3 py-1 rounded-full bg-brand-green-soft body-2-green-600 font-medium transition-colors duration-300 group-hover:bg-brand-green group-hover:text-white">
@@ -108,7 +119,8 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
             </div>
 
             {/* Title */}
-            <h3 className="text-headline-4 transition-colors duration-300 group-hover:text-brand-green">
+            <h3 className="text-headline-4 transition-colors duration-300 group-hover:text-brand-green group-hover:underline cursor-pointer"
+            >
               {article.title}
             </h3>
 
@@ -138,31 +150,17 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
             </div>
           </div>
         </article>
-      ))}
+      ))
+      }
 
       {/* View More Button */}
-      {hasMore && (
-        <div className="w-full flex justify-center pt-20 lg:col-span-2">
-          <button className="body-1-brown-500 hover:text-brown-600 transition-colors cursor-pointer"
-            onClick={handleLoadMore}
-            disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <div className="flex items-center gap-2">
-                  <svg className="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25 text-brand-green" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75 text-brand-green" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Loading...</span>
-                </div>
-              </>
-            ) : (
-              <span className="underline">View more</span>
-            )}
-          </button>
-        </div>
+      {(hasMore || filteredArticles.length > displayCount) && (
+        <ViewmoreButton 
+          onLoadMore={handleLoadMore} 
+          isLoading={isLoadingMore}
+        />
       )}
-    </div>
+    </div >
   );
 }
 

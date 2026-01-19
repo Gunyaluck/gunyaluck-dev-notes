@@ -28,6 +28,7 @@
   --color-brand-orange: #f2b68c;
   --color-brand-green: #12b279;
   --color-brand-green-soft: #d7f2e9;
+  --color-brand-green-neon: #39FF14;
   --color-brand-red: #eb5164;
 
   --color-white: #ffffff;
@@ -68,12 +69,20 @@ body {
     color: var(--color-brown-600);
   }
 
+  @media (min-width: 1024px) {
+    .lg\:text-headline-2 {
+      font-size: var(--font-size-headline-2);
+      line-height: 3rem;
+    }
+  }
+
   .text-headline-4 {
     font-size: var(--font-size-headline-4);
     font-weight: var(--font-weight-headline);
     line-height: 1.75rem;
     color: var(--color-brown-600);
   }
+
 
   /* Legacy class names for compatibility */
   .body-1 {
@@ -153,4 +162,85 @@ body {
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.markdown {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.markdown :is(h2) {
+  margin-top: 15px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.markdown :is(h3, h4, h5, h6) {
+  margin-top: 32px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.markdown p:not(:is(h2, h3, h4, h5, h6) + p) {
+  margin-top: 22px;
+}
+
+.markdown :is(ul, ol) {
+  list-style-position: outside;
+}
+
+.markdown :is(ul) {
+  list-style-type: "•";
+}
+
+.markdown :is(ol) {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+.markdown :is(a) {
+  text-decoration: underline;
+}
+
+.markdown :is(a):hover {
+  text-decoration: underline;
+  color: #726d67;
+  cursor: pointer;
+}
+
+.markdown :is(ul) li {
+  margin-block: 8px;
+  padding-inline-start: 8px;
+  padding-left: 5px;
+  margin-left: 10px;
+}
+
+.markdown :is(ol) li {
+  margin-block: 8px;
+  padding-inline-start: 8px;
+  padding-left: 3px;
+  margin-left: 10px;
+}
+
+.markdown :is(blockquote) {
+  border-left: 3px solid #26231e;
+  margin: 1.5em 10px;
+  padding-left: 10px;
+  font-style: italic;
+}
+
+.markdown :is(hr) {
+  border: none;
+  border-top: 2.5px solid #d1d5db;
+  margin: 1.5em 0;
+  width: 30%;
+}
+
+.markdown img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 2em 0;
+  border-radius: 12px;
 }
