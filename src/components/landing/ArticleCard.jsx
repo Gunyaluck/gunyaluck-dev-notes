@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { formatDate } from "../../lib/utils";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { ViewmoreButton } from "./ViewmoreButton";
+import { ViewMoreButton } from "./ViewMoreButton";
 
 export function ArticleCard({ selectedCategory, searchQuery }) {
   const [articles, setArticles] = useState([]);
@@ -155,7 +155,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
 
       {/* View More Button */}
       {(hasMore || filteredArticles.length > displayCount) && (
-        <ViewmoreButton 
+        <ViewMoreButton 
           onLoadMore={handleLoadMore} 
           isLoading={isLoadingMore}
         />
