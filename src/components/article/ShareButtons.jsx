@@ -13,7 +13,7 @@ export function ShareButtons({ url }) {
                         console.error("Failed to copy:", err);
                     }
                 }}
-                className="w-[161px] h-[48px] flex items-center justify-center gap-2 px-4 py-2 border border-brown-300 rounded-full bg-white hover:bg-brown-100 transition-colors lg:w-[185px]"
+                className="w-[161px] h-[48px] flex items-center justify-center gap-2 px-4 py-2 border border-brown-300 rounded-full bg-white hover:bg-brown-100 transition-colors lg:w-[185px] cursor-pointer"
             >
                 <Copy className="w-4 h-4 text-brown-600" />
                 <span className="body-1-brown-600">Copy link</span>

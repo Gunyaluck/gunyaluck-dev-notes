@@ -83,6 +83,13 @@ body {
     color: var(--color-brown-600);
   }
 
+  .text-headline-4-white {
+    font-size: var(--font-size-headline-4);
+    font-weight: var(--font-weight-headline);
+    line-height: 1.75rem;
+    color: var(--color-white);
+  }
+
 
   /* Legacy class names for compatibility */
   .body-1 {
@@ -153,6 +160,13 @@ body {
     font-weight: var(--font-weight-body);
     line-height: 1.25rem;
     color: var(--color-brown-400);
+  }
+
+  .body-3-white {
+    font-size: var(--font-size-body-3);
+    font-weight: var(--font-weight-body);
+    line-height: 1.25rem;
+    color: var(--color-white);
   }
 }
 
@@ -243,4 +257,15 @@ body {
   height: auto;
   margin: 2em 0;
   border-radius: 12px;
+}
+
+/* Hide toast notifications on mobile, show only on lg */
+[data-sonner-toaster] {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  [data-sonner-toaster] {
+    display: block;
+  }
 }

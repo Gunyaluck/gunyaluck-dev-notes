@@ -46,7 +46,7 @@ export function AlertCreateAccount({ isOpen, onClose }) {
                         {/* Create account button */}
                         <button
                             onClick={handleCreateAccount}
-                            className="w-[207px] py-3 px-6 bg-brown-600 rounded-full text-white body-1-white font-semibold hover:bg-brown-500 transition-colors"
+                            className="w-[207px] py-3 px-6 bg-brown-600 rounded-full text-white body-1-white font-semibold hover:bg-brown-500 transition-colors cursor-pointer"
                         >
                             Create account
                         </button>
@@ -58,7 +58,7 @@ export function AlertCreateAccount({ isOpen, onClose }) {
                             </span>
                             <button
                                 onClick={handleLogIn}
-                                className="body-1-brown-600 underline hover:text-brand-green transition-colors"
+                                className="body-1-brown-600 underline hover:text-brand-green transition-colors cursor-pointer"
                             >
                                 Log in
                             </button>
