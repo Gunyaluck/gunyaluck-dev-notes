@@ -1,5 +1,4 @@
 import { Input } from "../ui/input";
-import NavBar from "../layout/Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -44,27 +43,26 @@ export function SignUpForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted:", formData);
+      // Temporarily skip API check - allow any email to proceed
+      navigate("/success");
     }
   };
-
-  const navigate = useNavigate();
 
   const handleSignInClick = () => {
     navigate("/login");
   };
 
   return (
-    <>
-      <NavBar />
-      <div className="w-full flex items-center justify-center px-4 my-15">
-        <div className="w-full bg-brown-200 rounded-2xl px-6 py-15 flex flex-col gap-6 lg:w-[798px] lg:px-30 lg:pt-20 lg:pb-24">
-          <h1 className="text-headline-2 text-center text-brown-600">
-            Sign up
-          </h1>
+    <div className="w-full flex items-center justify-center px-4 my-15">
+      <div className="w-full bg-brown-200 rounded-2xl px-6 py-15 flex flex-col gap-6 lg:w-[798px] lg:px-30 lg:pt-20 lg:pb-24">
+        <h1 className="text-headline-2 text-center text-brown-600">
+          Sign up
+        </h1>
 
           <form
             className="flex flex-col gap-6 items-center"
@@ -187,9 +185,8 @@ export function SignUpForm() {
             >
               Log in
             </a>
-          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

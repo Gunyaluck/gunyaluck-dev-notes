@@ -1,7 +1,7 @@
 import { Input } from "../ui/input";
-import NavBar from "../layout/Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { AlertIncorrect } from "../layout/AlertIncorrect";
 
 export function LoginForm() {
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ export function LoginForm() {
     email: "",
     password: "",
   });
+  const [showAlertIncorrect, setShowAlertIncorrect] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -38,10 +39,36 @@ export function LoginForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form submitted:", formData);
+    if (!validateForm()) return;
+
+    try {
+      const response = await fetch("https://blog-post-project-api.vercel.app/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (response.ok) {
+        // Login successful
+        const data = await response.json();
+        console.log("Login successful:", data);
+        // Navigate to home page or dashboard
+        navigate("/");
+      } else {
+        // Login failed - show incorrect alert
+        setShowAlertIncorrect(true);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      // Show alert on error
+      setShowAlertIncorrect(true);
     }
   };
 
@@ -52,10 +79,8 @@ export function LoginForm() {
   };
 
   return (
-    <>
-      <NavBar />
-      <div className="w-full flex items-center justify-center px-4 my-15">
-        <div className="w-full bg-brown-200 rounded-2xl px-6 py-15 flex flex-col gap-6 lg:w-[798px] lg:h-[540px] lg:px-30 lg:pt-20 lg:pb-0">
+    <div className="w-full flex items-center justify-center px-4 my-15">
+      <div className="w-full bg-brown-200 rounded-2xl px-6 py-15 flex flex-col gap-6 lg:w-[798px] lg:h-[540px] lg:px-30 lg:pt-20 lg:pb-0">
           {/* Title */}
           <h1 className="text-headline-2 text-center text-brown-600">Log in</h1>
 
@@ -139,9 +164,14 @@ export function LoginForm() {
             >
               Sign up
             </a>
-          </div>
         </div>
       </div>
-    </>
+
+      {/* Alert Incorrect */}
+      <AlertIncorrect
+        isOpen={showAlertIncorrect}
+        onClose={() => setShowAlertIncorrect(false)}
+      />
+    </div>
   );
 }

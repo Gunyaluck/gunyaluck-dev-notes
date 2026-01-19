@@ -56,7 +56,7 @@ export function CommentForm({ id, isLoggedIn, onCommentAdded }) {
                                 setComment("");
                             }
                         }}
-                        className="w-[121px] h-[48px] flex items-center justify-center px-6 py-2 bg-brown-600 text-white rounded-full body-1-white hover:bg-brown-500 transition-colors"
+                        className="w-[121px] h-[48px] flex items-center justify-center px-6 py-2 bg-brown-600 text-white rounded-full body-1-white hover:bg-brown-500 transition-colors cursor-pointer"
                     >
                         Send
                     </button>
