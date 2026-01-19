@@ -1,7 +1,7 @@
 export const categories = [
-  { value: "all", label: "All" },
-  { value: "highlight", label: "Highlight" },
-  { value: "cat", label: "Cat" },
-  { value: "inspiration", label: "Inspiration" },
-  { value: "general", label: "General" },
+  { value: "All", label: "All" },
+  { value: "Highlight", label: "Highlight" },
+  { value: "Cat", label: "Cat" },
+  { value: "Inspiration", label: "Inspiration" },
+  { value: "General", label: "General" },
 ];
