@@ -2,7 +2,7 @@ import { articles } from "../../data/articles";
 
 export function ArticleCard({ selectedCategory, searchQuery }) {
   // Filter articles based on selected category
-  let filteredArticles = selectedCategory === "highlight" 
+  let filteredArticles = selectedCategory === "all" 
     ? articles 
     : articles.filter(article => 
         article.category.toLowerCase() === selectedCategory.toLowerCase()
