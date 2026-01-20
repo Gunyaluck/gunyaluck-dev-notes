@@ -2,6 +2,9 @@ import { Input } from "../ui/input";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { ErrorMessage } from "./ErrorMessage";
+import { AuthFooter } from "./AuthFooter";
+import { Button } from "../common/Button";
 
 export function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -123,9 +126,6 @@ export function SignUpForm() {
     }
   };
 
-  const handleSignInClick = () => {
-    navigate("/login");
-  };
 
   return (
     <div className="w-full flex items-center justify-center px-4 my-15">
@@ -156,9 +156,7 @@ export function SignUpForm() {
                 value={formData.name}
                 onChange={handleInputChange}
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name}</p>
-              )}
+              <ErrorMessage message={errors.name} />
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -178,9 +176,7 @@ export function SignUpForm() {
                 value={formData.username}
                 onChange={handleInputChange}
               />
-              {errors.username && (
-                <p className="text-red-500 text-sm">{errors.username}</p>
-              )}
+              <ErrorMessage message={errors.username} />
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -204,17 +200,17 @@ export function SignUpForm() {
                 onChange={handleInputChange}
                 onInvalid={(e) => e.preventDefault()}
               />
-              {(errors.email ||
-                (formData.email &&
-                  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ||
-                (formData.email && checkEmailExists(formData.email))) && (
-                <p className="text-red-500 text-sm">
-                  {errors.email || 
-                   (formData.email && checkEmailExists(formData.email) 
-                     ? "Email is already taken, Please try another email."
-                     : "Email must be a valid email")}
-                </p>
-              )}
+              <ErrorMessage 
+                message={
+                  errors.email || 
+                  (formData.email && checkEmailExists(formData.email))
+                    ? errors.email || "Email is already taken, Please try another email."
+                    : (formData.email &&
+                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+                    ? "Email must be a valid email"
+                    : null
+                } 
+              />
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -250,31 +246,27 @@ export function SignUpForm() {
                   )}
                 </button>
               </div>
-              {(errors.password ||
-                (formData.password && formData.password.length < 6)) && (
-                <p className="text-red-500 text-sm">
-                  {errors.password || "Password must be at least 6 characters"}
-                </p>
-              )}
+              <ErrorMessage 
+                message={
+                  errors.password || 
+                  (formData.password && formData.password.length < 6
+                    ? "Password must be at least 6 characters"
+                    : null)
+                } 
+              />
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="w-[141px] h-12 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-500 transition-colors cursor-pointer"
+              variant="primary"
+              size="md"
+              width="141"
             >
               Sign up
-            </button>
+            </Button>
           </form>
 
-          <div className="flex items-center gap-2 w-full justify-center">
-            <span className="body-1-brown-400">Already have an account?</span>
-            <a
-              onClick={handleSignInClick}
-              className="body-1-brown-600 underline hover:text-brown-500 transition-colors cursor-pointer"
-            >
-              Log in
-            </a>
-        </div>
+          <AuthFooter type="signup" />
       </div>
     </div>
   );

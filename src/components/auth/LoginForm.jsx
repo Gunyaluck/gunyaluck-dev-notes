@@ -1,8 +1,11 @@
 import { Input } from "../ui/input";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { AlertIncorrect } from "../layout/AlertIncorrect";
+import { useState, useEffect } from "react";
+import { AlertIncorrect, showErrorToast } from "../common/Toast";
 import { Eye, EyeOff } from "lucide-react";
+import { ErrorMessage } from "./ErrorMessage";
+import { AuthFooter } from "./AuthFooter";
+import { Button } from "../common/Button";
 
 export function LoginForm() {
   const [formData, setFormData] = useState({
@@ -16,11 +19,27 @@ export function LoginForm() {
   });
   const [showAlertIncorrect, setShowAlertIncorrect] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
     setFormData(updatedFormData);
+    // Clear errors when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const validateForm = () => {
@@ -139,51 +158,26 @@ export function LoginForm() {
       return;
     }
 
-    // If email not found in localStorage, try API call
-    try {
-      const response = await fetch("https://blog-post-project-api.vercel.app/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+    // If email not found in localStorage, show error
+    // TODO: Add backend API call later
+    if (isMobile) {
+      // Mobile: Show red border on input fields only
+      setErrors({
+        email: "error",
+        password: "error",
       });
-
-      if (response.ok) {
-        // Login successful
-        const data = await response.json();
-        console.log("Login successful:", data);
-        
-        // Save user data to localStorage
-        const userData = {
-          name: data.user?.name || data.name || formData.email.split("@")[0],
-          email: formData.email,
-          avatar: data.user?.avatar || data.avatar || null,
-        };
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("isLoggedIn", "true");
-        
-        // Navigate to member landing page (same as signup)
-        navigate("/member-landing-page");
-      } else {
-        // Login failed - show incorrect alert
-        setShowAlertIncorrect(true);
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      // Show alert on error
+    } else {
+      // Desktop: Show red border on input fields and AlertIncorrect toast
+      setErrors({
+        email: "error",
+        password: "error",
+      });
       setShowAlertIncorrect(true);
     }
   };
 
   const navigate = useNavigate();
 
-  const handleSignUpClick = () => {
-    navigate("/signup");
-  };
 
   return (
     <div className="w-full flex items-center justify-center px-4 my-15">
@@ -217,12 +211,17 @@ export function LoginForm() {
                 value={formData.email}
                 onChange={handleInputChange}
               />
-              {(errors.email ||
-                (formData.email &&
-                  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))) && (
-                <p className="text-red-500 text-sm">
-                  {errors.email || "Email must be a valid email"}
-                </p>
+              {/* Show error message only on mobile and only for validation errors, not login errors */}
+              {isMobile && errors.email && errors.email !== "error" && (
+                <ErrorMessage 
+                  message={
+                    errors.email || 
+                    (formData.email &&
+                      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+                      ? "Email must be a valid email"
+                      : null)
+                  } 
+                />
               )}
             </div>
 
@@ -238,7 +237,8 @@ export function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   className={`w-full h-12 px-4 pr-12 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                    errors.password
+                    errors.password ||
+                    (formData.password && formData.password.length < 6)
                       ? "border-red-500 focus:border-red-500 focus-visible:border-red-500"
                       : "border-brown-300 focus:border-brown-500 focus-visible:border-brown-500"
                   }`}
@@ -253,39 +253,37 @@ export function LoginForm() {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5 text-brown-400" />
-                  ) : (
                     <Eye className="w-5 h-5 text-brown-400" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-brown-400" />
                   )}
                 </button>
               </div>
-              {(errors.password ||
-                (formData.password && formData.password.length < 6)) && (
-                <p className="text-red-500 text-sm">
-                  {errors.password || "Password must be at least 6 characters"}
-                </p>
+              {/* Show error message only on mobile and only for validation errors, not login errors */}
+              {isMobile && errors.password && errors.password !== "error" && (
+                <ErrorMessage 
+                  message={
+                    errors.password || 
+                    (formData.password && formData.password.length < 6
+                      ? "Password must be at least 6 characters"
+                      : null)
+                  } 
+                />
               )}
             </div>
 
             {/* Log in Button */}
-            <button
+            <Button
               type="submit"
-              className="w-[141px] h-12 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="primary"
+              size="md"
+              width="141"
             >
               Log in
-            </button>
+            </Button>
           </form>
 
-          {/* Sign Up Link */}
-          <div className="flex items-center gap-2 w-full justify-center">
-            <span className="body-1-brown-400">Don't have any account?</span>
-            <a
-              onClick={handleSignUpClick}
-              className="body-1-brown-600 underline hover:text-brown-500 transition-colors cursor-pointer"
-            >
-              Sign up
-            </a>
-        </div>
+          <AuthFooter type="login" />
       </div>
 
       {/* Alert Incorrect */}

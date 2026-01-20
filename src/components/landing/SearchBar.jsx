@@ -3,6 +3,7 @@ import { Input } from "../ui/input";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Button } from "../common/Button";
 
 export function SearchBar({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -84,19 +85,19 @@ export function SearchBar({ onSearch }) {
   return (
     <div className="w-full lg:w-auto lg:flex-1 lg:max-w-sm lg:order-2">
       <div className="relative" ref={searchRef}>
-        <Input
-          type="text"
-          placeholder="Search"
-          className="w-full h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:outline-none focus:border-brown-500 focus:ring-2 focus:ring-brown-200"
-          value={searchQuery}
-          onChange={handleSearch}
+      <Input
+        type="text"
+        placeholder="Search"
+        className="w-full h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:outline-none focus:border-brown-500 focus:ring-2 focus:ring-brown-200"
+        value={searchQuery}
+        onChange={handleSearch}
           onFocus={() => {
             if (suggestions.length > 0) {
               setShowSuggestions(true);
             }
           }}
-        />
-        <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brown-400 pointer-events-none" />
+      />
+      <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brown-400 pointer-events-none" />
         
         {/* Suggestions Dropdown */}
         {showSuggestions && suggestions.length > 0 && (
@@ -105,17 +106,18 @@ export function SearchBar({ onSearch }) {
             className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg border border-brown-300 shadow-lg z-50 max-h-[400px] overflow-y-auto"
           >
             {suggestions.map((article) => (
-              <button
+              <Button
                 key={article.id}
+                variant="text"
                 onClick={() => handleSuggestionClick(article.id)}
-                className="w-full px-4 py-3 text-left hover:bg-brown-200 cursor-pointer transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-brown-200 last:border-b-0"
+                className="w-full px-4 py-3 text-left hover:bg-brown-200 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-brown-200 last:border-b-0 no-underline"
               >
                 <p className="body-1-brown-600">{article.title}</p>
-              </button>
+              </Button>
             ))}
           </div>
         )}
-      </div>
     </div>
+  </div>
   );
 }

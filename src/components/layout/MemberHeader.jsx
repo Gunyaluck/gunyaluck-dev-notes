@@ -2,13 +2,19 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo/logo.svg";
 import { UserDropDown } from "../member/UserDropDown";
+import { NotificationDropdown } from "../member/NotificationDropdown";
 import { Bell, ChevronDown } from "lucide-react";
+import { Button } from "../common/Button";
 
 export function MemberNavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  
+  // Mock: มีการแจ้งเตือน 2 รายการ
+  const hasNotifications = true;
 
   // Function to load user data from localStorage
   const loadUserData = () => {
@@ -85,29 +91,41 @@ export function MemberNavBar() {
           </div>
 
           {/* Hamburger Menu - Mobile */}
-          <button
+          <Button
             onClick={toggleMenu}
-            className="w-[18px] h-[12px] flex flex-col items-center justify-between cursor-pointer lg:hidden"
+            variant="hamburger"
+            className="lg:hidden"
             aria-label="Open menu"
           >
             <span className="w-full h-[2px] rounded-full bg-brown-400"></span>
             <span className="w-full h-[2px] rounded-full bg-brown-400"></span>
             <span className="w-full h-[2px] rounded-full bg-brown-400"></span>
-          </button>
+          </Button>
         </div>
 
         {/* User Section - Desktop - Right */}
         <div className="hidden lg:flex lg:items-center lg:gap-4">
           {/* Notification Bell */}
-          <div className="relative">
-            <button
-              className="w-10 h-10 rounded-full bg-white border border-brown-300 flex items-center justify-center hover:bg-brown-100 transition-colors"
+          <div className="relative w-12 h-12 shrink-0">
+            <Button
+              variant="icon"
+              size="icon-lg"
+              className="w-12 h-12 bg-white border border-brown-300 hover:bg-brown-100 shrink-0"
               aria-label="Notifications"
+              onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
             >
               <Bell className="w-5 h-5 text-brown-600" />
-              {/* Red notification dot */}
-              <div className="absolute top-1 right-0 w-2 h-2 bg-brand-red rounded-full"></div>
-            </button>
+            </Button>
+            {/* Red notification dot - Hide when dropdown is open */}
+            {hasNotifications && !showNotificationDropdown && (
+              <div className="absolute top-1 right-0.5 w-2 h-2 bg-brand-red rounded-full"></div>
+            )}
+            
+            {/* Notification Dropdown */}
+            <NotificationDropdown
+              isOpen={showNotificationDropdown}
+              onClose={() => setShowNotificationDropdown(false)}
+            />
           </div>
 
           {/* User Avatar, Name, and Dropdown */}
@@ -128,15 +146,15 @@ export function MemberNavBar() {
                 ) : (
                   <div className="w-full h-full bg-brown-300 flex items-center justify-center">
                     <span className="text-headline-4 text-brown-600">
-                      {user?.username ? user.username.charAt(0).toUpperCase() : null}
+                      {user?.name ? user.name.charAt(0).toUpperCase() : null}
                     </span>
                   </div>
                 )}
               </div>
               
-              {/* Username */}
+              {/* Name */}
               <span className="body-1-brown-600 font-medium">
-                {user?.username}
+                {user?.name || "Moodeng ja"}
               </span>
               
               {/* Chevron Down */}
@@ -149,6 +167,7 @@ export function MemberNavBar() {
                 <UserDropDown
                   user={user}
                   onClose={handleCloseDropdown}
+                  hideBell={true}
                 />
               </div>
             )}
@@ -161,6 +180,7 @@ export function MemberNavBar() {
             <UserDropDown
               user={user}
               onClose={handleCloseDropdown}
+              hideBell={false}
             />
           </div>
         )}

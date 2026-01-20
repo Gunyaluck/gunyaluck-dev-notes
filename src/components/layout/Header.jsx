@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo/logo.svg";
+import { Button } from "../common/Button";
 
 function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,46 +43,48 @@ function NavBar() {
           </div>
 
           {/* Hamburger Menu */}
-          <button
+          <Button
             onClick={toggleMenu}
-            className="w-[18px] h-[12px] flex flex-col items-center justify-between cursor-pointer lg:hidden"
+            variant="hamburger"
+            className="lg:hidden"
             aria-label="Open menu"
           >
             <span className="w-full h-[2px] rounded-full bg-brown-400"></span>
             <span className="w-full h-[2px] rounded-full bg-brown-400"></span>
             <span className="w-full h-[2px] rounded-full bg-brown-400"></span>
-          </button>
+          </Button>
         </div>
 
         {/* Mobile: login and signup Buttons - Show when menu is open */}
         {isMenuOpen && (
           <div className="w-full flex flex-col gap-4 py-4 border-t border-brown-300 lg:hidden">
-            <button onClick={handleLoginClick} className="w-full h-[48px] px-6 py-3 border border-brown-400 rounded-[999px] body-1-brown-600 hover:bg-brown-600 transition-colors hover:text-white cursor-pointer">
+            <Button onClick={handleLoginClick} variant="outline" size="full">
               Log in
-            </button>
-            <button
-              onClick={handleSignUpClick}
-              className="w-full h-[48px] px-10 py-3 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-200 transition-colors hover:text-brown-600 cursor-pointer"
-            >
+            </Button>
+            <Button onClick={handleSignUpClick} variant="secondary" size="full">
               Sign up
-            </button>
+            </Button>
           </div>
         )}
 
         {/* Desktop: login and signup Buttons */}
-        <div className="hidden lg:w-[276px] lg:h-[48px] lg:flex items-center gap-2">
-          <button
+        <div className="hidden lg:w-[290px] lg:h-[48px] lg:flex items-center gap-2">
+          <Button
             onClick={handleLoginClick}
-            className="w-[127px] h-[48px] px-6 py-3 border border-brown-400 rounded-[999px] body-1-brown-600 hover:bg-brown-600 transition-colors hover:text-white cursor-pointer"
+            variant="outline"
+            size="lg"
+            width="141"
           >
             Log in
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSignUpClick}
-            className="w-[141px] h-[48px] px-10 py-3 bg-brown-600 rounded-[999px] body-1-white hover:bg-brown-200 transition-colors hover:text-brown-600 cursor-pointer"
+            variant="secondary"
+            size="lg"
+            width="141"
           >
             Sign up
-          </button>
+          </Button>
         </div>
       </div>
     </nav>

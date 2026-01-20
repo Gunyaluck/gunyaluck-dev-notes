@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AlertCreateAccount } from "../layout/AlertCreateAccount";
+import { Button } from "../common/Button";
 
 export function CommentForm({ id, isLoggedIn, onCommentAdded }) {
     const [comment, setComment] = useState("");
@@ -15,7 +16,7 @@ export function CommentForm({ id, isLoggedIn, onCommentAdded }) {
                     className="w-full min-h-[120px] p-4 bg-brown-300 rounded-lg border-none resize-none body-1-brown-600 placeholder-brown-400 focus:outline-none focus:ring-2 focus:ring-brand-green"
                 />
                 <div className="flex justify-start lg:justify-end">
-                    <button
+                    <Button
                         onClick={async () => {
                             if (!isLoggedIn) {
                                 setShowAlertCreateAccount(true);
@@ -56,10 +57,12 @@ export function CommentForm({ id, isLoggedIn, onCommentAdded }) {
                                 setComment("");
                             }
                         }}
-                        className="w-[121px] h-[48px] flex items-center justify-center px-6 py-2 bg-brown-600 text-white rounded-full body-1-white hover:bg-brown-500 transition-colors cursor-pointer"
+                        variant="primary"
+                        size="lg"
+                        width="121"
                     >
                         Send
-                    </button>
+                    </Button>
                 </div>
             </div>
 

@@ -1,23 +1,20 @@
+import { Button } from "../common/Button";
+import { LoadingSpinner } from "../common/LoadingSpinner";
+
 export function ViewMoreButton({ onLoadMore, isLoading = false }) {
     return (
         <div className="w-full flex justify-center pt-20 lg:col-span-2">
-            <button 
-                className="body-1-brown-500 hover:text-brown-600 transition-colors cursor-pointer"
+            <Button
+                variant="text"
                 onClick={onLoadMore}
                 disabled={isLoading}
             >
                 {isLoading ? (
-                    <div className="flex items-center gap-2">
-                        <svg className="animate-spin h-10 w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25 text-brand-green" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75 text-brand-green" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Loading...</span>
-                    </div>
+                    <LoadingSpinner />
                 ) : (
                     <span className="underline">View more</span>
                 )}
-            </button>
+            </Button>
         </div>
     );
 }

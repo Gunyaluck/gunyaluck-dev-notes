@@ -176,6 +176,13 @@ body {
   }
 }
 
+.body-3-green-500 {
+  font-size: var(--font-size-body-3);
+  font-weight: var(--font-weight-body);
+  line-height: 1.25rem;
+  color: var(--color-green-500);
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -265,13 +272,10 @@ body {
   border-radius: 12px;
 }
 
-/* Hide toast notifications on mobile, show only on lg */
-[data-sonner-toaster] {
-  display: none;
-}
-
+/* Custom toast width for profile save - Desktop only */
 @media (min-width: 1024px) {
-  [data-sonner-toaster] {
-    display: block;
+  [data-sonner-toast].profile-save-toast {
+    width: 700px !important;
+    max-width: 700px !important;
   }
 }
