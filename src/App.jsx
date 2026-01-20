@@ -6,6 +6,8 @@ import { SignUpPage } from "./page/SignUpPage";
 import { LoginPage } from "./page/LoginPage";
 import { SuccessMessage } from "./components/auth/SuccessMessage";
 import { ViewArticlePage } from "./page/ViewArticlePage";
+import { MemberLandingPage } from "./page/MemberLandingPage";
+import { ProfilePage } from "./page/ProfilePage";
   
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessMessage />} />
         <Route path="/post/:postId" element={<ViewArticlePage />} />
+        <Route path="/member-landing-page" element={<MemberLandingPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
       <Toaster position="bottom-right" className="hidden lg:block" />
     </BrowserRouter>

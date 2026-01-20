@@ -18,7 +18,7 @@ export function ArticleContent({ id }) {
 
     // Simulate: All users are not logged in
     const isLoggedIn = false;
-
+    
     const fetchArticleContent = async () => {
         if (!id) return;
 
@@ -32,8 +32,8 @@ export function ArticleContent({ id }) {
                 throw new Error(`Failed to fetch article: ${response.status}`);
             }
 
-            const data = await response.json();
-            setArticle(data);
+        const data = await response.json();
+        setArticle(data);
 
             console.log(data);
         } catch (err) {

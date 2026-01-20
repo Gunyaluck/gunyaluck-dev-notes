@@ -6,7 +6,8 @@ export function SuccessMessage() {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    navigate("/login");
+    // Navigate to member landing page (user is already logged in)
+    navigate("/member-landing-page");
   };
 
   return (
