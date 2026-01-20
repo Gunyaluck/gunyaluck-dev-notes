@@ -10,6 +10,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
   const [displayCount, setDisplayCount] = useState(6);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchArticlesData = async (pageNum = 1, append = false) => {
@@ -36,10 +37,13 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
       setHasMore(response.data.currentPage < response.data.totalPages);
     } catch (error) {
       console.error("Error fetching articles:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchArticlesData(1, false);
     setPage(1);
     setDisplayCount(6);
@@ -83,6 +87,21 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
 
   // Show articles based on displayCount
   const displayedArticles = filteredArticles.slice(0, displayCount);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="w-full mt-6 mb-30 px-4 py-0 flex justify-center items-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-4">
+          <svg className="animate-spin h-10 w-10 text-brand-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="body-1-brown-500">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mt-6 mb-30 px-4 py-0 flex flex-col gap-12 lg:w-full lg:grid lg:grid-cols-2 lg:gap-6">

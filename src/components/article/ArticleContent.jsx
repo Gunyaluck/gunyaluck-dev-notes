@@ -6,19 +6,46 @@ import { AlertCreateAccount } from "../layout/AlertCreateAccount";
 import { ShareButtons } from "./ShareButtons";
 import { CommentForm } from "./CommentForm";
 import { ArticleAuthorSidebar } from "./ArticleAuthorSidebar";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 
 export function ArticleContent({ id }) {
     const [article, setArticle] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [comments, setComments] = useState([]);
+
+    // Mock comments data - will be replaced with backend API later
+    const mockComments = [
+        {
+            id: 1,
+            author: "Jacob Lash",
+            authorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+            date: "2024-09-12T18:30:00Z",
+            content: "I loved this article! It really explains why my cat is so independent yet loving. The purring section was super interesting."
+        },
+        {
+            id: 2,
+            author: "Ahri",
+            authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+            date: "2024-09-12T18:30:00Z",
+            content: "Such a great read! I've always wondered why my cat slow blinks at me—now I know it's her way of showing trust!"
+        },
+        {
+            id: 3,
+            author: "Mimi mama",
+            authorAvatar: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=100&h=100&fit=crop",
+            date: "2024-09-12T18:30:00Z",
+            content: "This article perfectly captures why cats make such amazing pets. I had no idea their purring could help with healing. Fascinating stuff!"
+        }
+    ];
+
+    const [comments, setComments] = useState(mockComments);
     const [reactionCount, setReactionCount] = useState(321);
     const [showAlertCreateAccount, setShowAlertCreateAccount] = useState(false);
 
     // Simulate: All users are not logged in
     const isLoggedIn = false;
-
+    
     const fetchArticleContent = async () => {
         if (!id) return;
 
@@ -32,8 +59,8 @@ export function ArticleContent({ id }) {
                 throw new Error(`Failed to fetch article: ${response.status}`);
             }
 
-            const data = await response.json();
-            setArticle(data);
+        const data = await response.json();
+        setArticle(data);
 
             console.log(data);
         } catch (err) {
@@ -51,13 +78,7 @@ export function ArticleContent({ id }) {
     if (isLoading) {
         return (
             <div className="w-full min-h-screen flex items-center justify-center py-20">
-                <div className="flex flex-col items-center gap-4">
-                    <svg className="animate-spin h-12 w-12 text-brand-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span className="body-1-brown-400">Loading article...</span>
-                </div>
+                <LoadingSpinner />
             </div>
         );
     }
@@ -200,30 +221,34 @@ export function ArticleContent({ id }) {
                             />
 
                             {/* Comments Display Section */}
-                            <div className="mt-8 mb-8 flex flex-col gap-6">
+                            <div className="mt-8 flex flex-col">
                                 {comments.length > 0 ? (
-                                    comments.map((commentItem) => (
-                                        <div key={commentItem.id} className="flex gap-4">
-                                            {commentItem.authorAvatar ? (
-                                                <img
-                                                    src={commentItem.authorAvatar}
-                                                    alt={commentItem.author}
-                                                    className="w-10 h-10 rounded-full object-cover shrink-0"
-                                                />
-                                            ) : (
-                                                <div className="w-10 h-10 rounded-full bg-brown-300 flex items-center justify-center shrink-0">
-                                                    <span className="body-3">
-                                                        {commentItem.author ? commentItem.author.charAt(0).toUpperCase() : "U"}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <div className="flex flex-col gap-1 flex-1">
-                                                <div className="flex items-center gap-2">
+                                    comments.map((commentItem, index) => (
+                                        <div key={commentItem.id} className={`flex flex-col gap-3 pb-6 lg:gap-6 ${index < comments.length - 1 ? 'border-b border-brown-300 mb-6' : ''}`}>
+                                            {/* Author Info Section: Avatar + Name + Date */}
+                                            <div className="flex gap-4 items-center">
+                                                {commentItem.authorAvatar ? (
+                                                    <img
+                                                        src={commentItem.authorAvatar}
+                                                        alt={commentItem.author}
+                                                        className="w-11 h-11 rounded-full object-cover shrink-0"
+                                                    />
+                                                ) : (
+                                                    <div className="w-11 h-11 rounded-full bg-brown-300 flex items-center justify-center shrink-0">
+                                                        <span className="body-3">
+                                                            {commentItem.author ? commentItem.author.charAt(0).toUpperCase() : "U"}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                <div className="flex flex-col gap-1">
                                                     <span className="text-headline-4 font-semibold">{commentItem.author}</span>
                                                     <span className="body-2 text-brown-400">
                                                         {formatDateTime(commentItem.date)}
                                                     </span>
                                                 </div>
+                                            </div>
+                                            {/* Content Section */}
+                                            <div className="flex-1">
                                                 <p className="body-1-brown-600">{commentItem.content}</p>
                                             </div>
                                         </div>

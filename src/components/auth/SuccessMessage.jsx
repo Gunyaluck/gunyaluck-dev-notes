@@ -1,12 +1,14 @@
 import NavBar from "../layout/Header";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../common/Button";
 
 export function SuccessMessage() {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    navigate("/login");
+    // Navigate to member landing page (user is already logged in)
+    navigate("/member-landing-page");
   };
 
   return (
@@ -25,12 +27,14 @@ export function SuccessMessage() {
           </h1>
 
           {/* Continue Button */}
-          <button
+          <Button
             onClick={handleContinue}
-            className="w-[154px] h-12 bg-brown-600 rounded-full body-1-white hover:bg-brown-500 transition-colors cursor-pointer"
+            variant="primary"
+            size="md"
+            width="154"
           >
             Continue
-          </button>
+          </Button>
         </div>
       </div>
     </>
