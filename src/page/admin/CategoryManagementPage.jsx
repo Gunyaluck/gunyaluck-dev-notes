@@ -5,7 +5,7 @@ import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/ui/input";
-import { DeleteCategoryModal } from "../../components/admin/CategoryManagement/DeleteCategoryModal.jsx";
+import { DeleteCategoryModal } from "../../components/admin/CategoryManagement/DeleteCategoryModal";
 
 // Mock categories data
 const mockCategories = [

@@ -1,5 +1,5 @@
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
-import { AdminResetPasswordForm } from "../../components/admin/ResetPassword/AdminResetPasswordForm.jsx";
+import { AdminResetPasswordForm } from "../../components/admin/ResetPassword/AdminResetPasswordForm";
 
 export function AdminResetPasswordPage() {
   return (

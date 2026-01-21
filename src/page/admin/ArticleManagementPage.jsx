@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
-import { DeleteArticleModal } from "../../components/admin/ArticleManagement/DeleteArticleModal.jsx";
+import { DeleteArticleModal } from "../../components/admin/ArticleManagement/DeleteArticleModal";
 import axios from "axios";
 
 export function ArticleManagementPage() {

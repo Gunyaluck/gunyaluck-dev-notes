@@ -1,5 +1,5 @@
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
-import { CategoryForm } from "../../components/admin/CategoryManagement/CategoryForm.jsx";
+import { CategoryForm } from "../../components/admin/CategoryManagement/CategoryForm";
 
 export function CreateCategoryPage() {
   return (
