@@ -1,5 +1,5 @@
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
-import { AdminProfileForm } from "../../components/admin/Profile/AdminProfileForm";
+import { AdminProfileForm } from "../../components/admin/Profile/AdminProfileForm.jsx";
 
 export function AdminProfilePage() {
   return (
