@@ -97,6 +97,13 @@ body {
     color: var(--color-brown-400);
   }
 
+  .text-headline-4-blue-600 {
+    font-size: var(--font-size-headline-4);
+    font-weight: var(--font-weight-headline);
+    line-height: 1.75rem;
+    color: var(--color-blue-400);
+  }
+
   /* Legacy class names for compatibility */
   .body-1 {
     font-size: var(--font-size-body-1);

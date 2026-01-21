@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { User, RotateCcw, Eye, EyeOff } from "lucide-react";
 import { Button } from "../../common/Button";
 import { ErrorMessage } from "../../auth/ErrorMessage";
-import { ResetPasswordModal } from "./ResetPasswordModal";
+import { ResetPasswordModal } from "../../common/ResetPasswordModal";
 
 export function ResetPasswordForm() {
     const [user, setUser] = useState(null);

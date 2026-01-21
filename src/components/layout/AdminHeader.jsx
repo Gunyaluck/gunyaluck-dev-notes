@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo/logo.svg";
 import { UserDropDown } from "./UserDropDown";
@@ -6,58 +6,35 @@ import { NotificationDropdown } from "./NotificationDropdown";
 import { Bell, ChevronDown } from "lucide-react";
 import { Button } from "../common/Button";
 
-export function MemberNavBar() {
+export function AdminHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   
-  // Mock: มีการแจ้งเตือน 2 รายการ
+  // Mock: มีการแจ้งเตือน 1 รายการ
   const hasNotifications = true;
 
-  // Function to load user data from localStorage
-  const loadUserData = () => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (e) {
-        // Fallback to default user
-        setUser({ name: "Moodeng ja", avatar: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=100&h=100&fit=crop" });
-      }
-    } else {
-      // Default user data
-      setUser({ name: "Moodeng ja", avatar: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=100&h=100&fit=crop" });
-    }
+  // Mock user data
+  const user = {
+    name: "Moodeng ja",
+    avatar: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=100&h=100&fit=crop"
   };
 
-  // Get user data from localStorage
-  useEffect(() => {
-    loadUserData();
-    
-    // Listen for storage changes to update user data
-    const handleStorageChange = (e) => {
-      if (e.key === "user") {
-        loadUserData();
-      }
-    };
-    
-    window.addEventListener("storage", handleStorageChange);
-    
-    // Also check periodically for changes (for same-tab updates)
-    const interval = setInterval(() => {
-      loadUserData();
-    }, 100);
-    
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
-    };
-  }, []);
+  // Mock notifications for AdminHeader
+  const adminMockNotifications = [
+    {
+      id: 1,
+      author: "Jacob Lash",
+      authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+      message: "Commented on your article.",
+      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+      type: "comment"
+    }
+  ];
 
   const handleLandingPage = () => {
-    navigate("/");
+    navigate("/admin-landing-page");
     setIsMenuOpen(false);
     setShowUserDropdown(false);
   };
@@ -87,7 +64,7 @@ export function MemberNavBar() {
       )}
       
       <nav className={`w-full bg-brown-100 border-b border-brown-300 lg:h-[80px] lg:flex lg:items-center lg:bg-white lg:border-b lg:border-brown-300 ${isMenuOpen ? 'fixed top-0 left-0 right-0 z-50 lg:relative lg:z-auto' : ''}`}>
-      <div className="w-full bg-brown-100 rounded-lg px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[80px] lg:px-30 lg:py-4 lg:bg-white lg:rounded-none">
+        <div className="w-full bg-brown-100 rounded-lg px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[80px] lg:px-30 lg:py-4 lg:bg-white lg:rounded-none">
         {/* Logo Section - Left */}
         <div className="w-full h-[48px] flex items-center justify-between lg:w-auto lg:h-auto">
           <div className="w-[24px] h-[24px] flex items-center gap-1 lg:w-[44px] lg:h-[44px]">
@@ -145,6 +122,7 @@ export function MemberNavBar() {
             <NotificationDropdown
               isOpen={showNotificationDropdown}
               onClose={() => setShowNotificationDropdown(false)}
+              mockNotifications={adminMockNotifications}
             />
           </div>
 
@@ -160,7 +138,7 @@ export function MemberNavBar() {
                 {user?.avatar ? (
                   <img
                     src={user.avatar}
-                    alt={user.username || "User"}
+                    alt={user.name || "User"}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -188,6 +166,7 @@ export function MemberNavBar() {
                   user={user}
                   onClose={handleCloseDropdown}
                   hideBell={true}
+                  showAdminPanel={true}
                 />
               </div>
             )}
@@ -201,6 +180,8 @@ export function MemberNavBar() {
               user={user}
               onClose={handleCloseDropdown}
               hideBell={false}
+              showAdminPanel={true}
+              mockNotifications={adminMockNotifications}
             />
           </div>
         )}

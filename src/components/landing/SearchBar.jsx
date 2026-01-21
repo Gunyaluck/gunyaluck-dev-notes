@@ -103,18 +103,53 @@ export function SearchBar({ onSearch }) {
         {showSuggestions && suggestions.length > 0 && (
           <div
             ref={suggestionsRef}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg border border-brown-300 shadow-lg z-50 max-h-[400px] overflow-y-auto"
+            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg border border-brown-300 shadow-xl z-50 max-h-[480px] overflow-y-auto"
           >
-            {suggestions.map((article) => (
-              <Button
-                key={article.id}
-                variant="text"
-                onClick={() => handleSuggestionClick(article.id)}
-                className="w-full px-4 py-3 text-left hover:bg-brown-200 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-brown-200 last:border-b-0 no-underline"
-              >
-                <p className="body-1-brown-600">{article.title}</p>
-              </Button>
-            ))}
+            {suggestions.map((article, index) => {
+              // Highlight search query in title
+              const highlightText = (text, query) => {
+                if (!query) return text;
+                const parts = text.split(new RegExp(`(${query})`, 'gi'));
+                return parts.map((part, i) =>
+                  part.toLowerCase() === query.toLowerCase() ? (
+                    <mark key={i} className="bg-white text-brand-green px-0.5 rounded">
+                      {part}
+                    </mark>
+                  ) : (
+                    part
+                  )
+                );
+              };
+
+              return (
+                <button
+                  key={article.id}
+                  onClick={() => handleSuggestionClick(article.id)}
+                  className="w-full px-4 py-3 text-left hover:bg-brown-100 transition-colors first:rounded-t-lg last:rounded-b-lg border-b border-brown-200 last:border-b-0 group flex flex-col gap-1.5"
+                >
+                  {/* Category Tag */}
+                  {article.category && (
+                    <div className="w-fit">
+                      <span className="px-2 py-0.5 rounded-full bg-brand-green-soft body-3 text-brand-green font-medium">
+                        {article.category}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <h3 className="text-headline-4 text-brown-600 group-hover:text-brand-green transition-colors line-clamp-1">
+                    {highlightText(article.title, searchQuery)}
+                  </h3>
+
+                  {/* Description */}
+                  {article.description && (
+                    <p className="body-2 text-brown-400 line-clamp-2">
+                      {article.description}
+                    </p>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
     </div>

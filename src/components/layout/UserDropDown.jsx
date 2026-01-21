@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { User, RotateCcw, LogOut, Bell } from "lucide-react";
+import { User, RotateCcw, LogOut, Bell, SquareArrowOutUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../common/Button";
 import { NotificationDropdown } from "./NotificationDropdown";
 
-export function UserDropDown({ user, onClose, hideBell = false }) {
+export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel = false, mockNotifications }) {
   const navigate = useNavigate();
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   
@@ -20,6 +20,12 @@ export function UserDropDown({ user, onClose, hideBell = false }) {
   const handleResetPassword = () => {
     // Navigate to reset password page
     navigate("/reset-password");
+    if (onClose) onClose();
+  };
+
+  const handleAdminPanel = () => {
+    // Navigate to admin landing page
+    navigate("/admin/article-management");
     if (onClose) onClose();
   };
 
@@ -78,6 +84,7 @@ export function UserDropDown({ user, onClose, hideBell = false }) {
             <NotificationDropdown
               isOpen={showNotificationDropdown}
               onClose={() => setShowNotificationDropdown(false)}
+              mockNotifications={mockNotifications}
             />
           </div>
         )}
@@ -93,14 +100,31 @@ export function UserDropDown({ user, onClose, hideBell = false }) {
           <span className="body-1-brown-600 flex-1">Profile</span>
         </Button>
 
+        <div className={showAdminPanel ? "" : "relative"}>
         <Button
           onClick={handleResetPassword}
           variant="menu"
-          className="border-b border-brown-300"
         >
           <RotateCcw className="w-5 h-5 text-brown-600 shrink-0" />
           <span className="body-1-brown-600 flex-1">Reset password</span>
         </Button>
+          {!showAdminPanel && (
+            <div className="absolute bottom-0 left-4 right-4 h-px bg-brown-300"></div>
+          )}
+        </div>
+
+        {showAdminPanel && (
+          <div className="relative">
+          <Button
+            onClick={handleAdminPanel}
+            variant="menu"
+          >
+            <SquareArrowOutUpRight className="w-5 h-5 text-brown-600 shrink-0" />
+            <span className="body-1-brown-600 flex-1">Admin panel</span>
+          </Button>
+            <div className="absolute bottom-0 left-4 right-4 h-px bg-brown-300"></div>
+          </div>
+        )}
 
         <Button
           onClick={handleLogout}

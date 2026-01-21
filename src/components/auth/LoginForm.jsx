@@ -7,7 +7,7 @@ import { ErrorMessage } from "./ErrorMessage";
 import { AuthFooter } from "./AuthFooter";
 import { Button } from "../common/Button";
 
-export function LoginForm() {
+export function LoginForm({ isAdmin = false }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -182,6 +182,11 @@ export function LoginForm() {
   return (
     <div className="w-full flex items-center justify-center px-4 my-15">
       <div className="w-full bg-brown-200 rounded-2xl px-6 py-15 flex flex-col gap-6 lg:w-[798px] lg:h-[540px] lg:px-30 lg:pt-20 lg:pb-0">
+          {/* Admin Panel Label */}
+          {isAdmin && (
+            <p className="text-headline-4-blue-600 text-center">Admin panel</p>
+          )}
+          
           {/* Title */}
           <h1 className="text-headline-2 text-center text-brown-600">Log in</h1>
 
