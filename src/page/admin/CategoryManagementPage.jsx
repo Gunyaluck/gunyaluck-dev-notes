@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminSidebar } from "../../components/admin/AdminSidebar";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/common/Button";
-import { Input } from "@/components/ui/input";
-import { DeleteCategoryModal } from "@/components/admin/CategoryManagement/DeleteCategoryModal";
+import { Button } from "../../components/common/Button";
+import { Input } from "../../components/ui/input";
+import { DeleteCategoryModal } from "../../components/admin/CategoryManagement/DeleteCategoryModal";
 
 // Mock categories data
 const mockCategories = [
