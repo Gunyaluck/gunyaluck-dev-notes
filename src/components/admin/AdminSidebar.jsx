@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { FileText, Folder, User, Bell, Lock, ExternalLink, LogOut } from "lucide-react";
 import { Button } from "../common/Button";
+import logo from "../../assets/logo/logo.svg";
 
 export function AdminSidebar() {
   const navigate = useNavigate();
@@ -39,17 +40,17 @@ export function AdminSidebar() {
   };
 
   return (
-    <div className="w-[240px] h-screen bg-white border-r border-brown-300 flex flex-col shrink-0">
+    <div className="w-[280px] h-screen bg-white border-r border-brown-300 flex flex-col shrink-0">
       {/* Logo Section */}
-      <div className="px-6 py-6 border-b border-brown-300">
-        <div className="flex items-center gap-2">
-          <span className="text-headline-3 text-brown-600">hh.</span>
-          <span className="text-headline-4 text-brand-orange">Admin panel</span>
+      <div className="w-[280px] h-[212px] flex items-center px-6 py-15">
+        <div className="flex items-start flex-col gap-2">
+          <img src={logo} alt="logo" className="w-15 h-15" />
+          <p className="text-headline-4-blue-600">Admin panel</p>  
         </div>
       </div>
 
       {/* Navigation Menu */}
-      <div className="flex-1 py-4">
+      <div className="flex-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -58,21 +59,21 @@ export function AdminSidebar() {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`w-full flex items-center gap-3 px-6 py-3 text-left transition-colors ${
+              className={`w-full h-[64px] flex items-center gap-3 px-6 py-3 text-left transition-colors ${
                 active
                   ? "bg-brown-200 text-brown-600"
-                  : "text-brown-400 hover:bg-brown-100 hover:text-brown-600"
+                  : "text-brown-400 hover:bg-brown-100 hover:text-brown-600 cursor-pointer"
               }`}
             >
-              <Icon className="w-5 h-5 shrink-0" />
-              <span className="body-1-brown-600">{item.label}</span>
+              <Icon className="w-6 h-6 shrink-0" />
+              <span className="body-1-brown-500">{item.label}</span>
             </button>
           );
         })}
       </div>
 
       {/* Bottom Section */}
-      <div className="border-t border-brown-300 py-4">
+      <div>
         {bottomItems.map((item) => {
           const Icon = item.icon;
           
@@ -80,7 +81,7 @@ export function AdminSidebar() {
             <button
               key={item.id}
               onClick={item.id === "logout" ? handleLogout : () => navigate(item.path)}
-              className="w-full flex items-center gap-3 px-6 py-3 text-left text-brown-400 hover:bg-brown-100 hover:text-brown-600 transition-colors"
+              className={`w-full h-[64px] flex items-center gap-3 px-6 text-left text-brown-400 hover:bg-brown-100 hover:text-brown-600 transition-colors cursor-pointer ${item.id === 'logout' ? 'border-y border-brown-300 pb-4' : ''}`}
             >
               <Icon className="w-5 h-5 shrink-0" />
               <span className="body-1-brown-600">{item.label}</span>

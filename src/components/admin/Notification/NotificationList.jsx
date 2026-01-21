@@ -100,7 +100,7 @@ export function NotificationList() {
           <div className="flex items-start shrink-0">
             <button
               onClick={() => handleView(notification)}
-              className="body-1-brown-600 hover:text-brand-green transition-colors duration-300 underline"
+              className="body-1-brown-600 hover:text-brand-green transition-colors duration-300 underline cursor-pointer"
             >
               View
             </button>

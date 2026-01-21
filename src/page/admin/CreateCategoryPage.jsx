@@ -3,12 +3,12 @@ import { CategoryForm } from "../../components/admin/CategoryManagement/Category
 
 export function CreateCategoryPage() {
   return (
-    <div className="min-h-screen bg-brown-100 flex">
+    <div className="w-full h-full bg-brown-100 flex">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 py-10 px-15">
         <CategoryForm />
       </div>
     </div>

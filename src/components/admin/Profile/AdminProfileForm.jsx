@@ -82,8 +82,8 @@ export function AdminProfileForm() {
           {/* Profile Picture */}
           <div className="flex flex-col gap-3">
             <label className="body-1-brown-600 font-semibold">Profile picture</label>
-            <div className="flex items-start gap-4">
-              <div className="w-24 h-24 rounded-full bg-brown-200 border border-brown-300 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="flex items-center gap-7">
+              <div className="w-[120px] h-[120px] rounded-full bg-brown-200 border border-brown-300 flex items-center justify-center overflow-hidden shrink-0">
                 {profilePicturePreview ? (
                   <img
                     src={profilePicturePreview}
@@ -118,7 +118,7 @@ export function AdminProfileForm() {
 
           {/* Name */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Name</label>
+            <label className="body-1-brown-400 font-semibold">Name</label>
             <Input
               type="text"
               value={formData.name}
@@ -129,7 +129,7 @@ export function AdminProfileForm() {
 
           {/* Username */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Username</label>
+            <label className="body-1-brown-400 font-semibold">Username</label>
             <Input
               type="text"
               value={formData.username}
@@ -140,7 +140,7 @@ export function AdminProfileForm() {
 
           {/* Email */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Email</label>
+            <label className="body-1-brown-400 font-semibold">Email</label>
             <Input
               type="email"
               value={formData.email}
@@ -151,7 +151,7 @@ export function AdminProfileForm() {
 
           {/* Bio */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">
+            <label className="body-1-brown-400 font-semibold">
               Bio (max 120 letters)
             </label>
             <textarea

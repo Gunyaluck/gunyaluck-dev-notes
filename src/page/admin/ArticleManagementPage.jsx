@@ -21,6 +21,13 @@ export function ArticleManagementPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [articleToDelete, setArticleToDelete] = useState(null);
 
+  // Helper function to get SelectItem className
+  const getSelectItemClassName = (value, currentValue) => {
+    const baseClass = "bg-white hover:text-brand-green focus:text-brand-green cursor-pointer rounded-md px-3 py-2 transition-all duration-200 [&>span[data-slot=select-item-indicator]]:hidden";
+    const selectedClass = value === currentValue ? "text-brown-600 font-semibold" : "";
+    return `${baseClass} ${selectedClass}`;
+  };
+
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -118,14 +125,14 @@ export function ArticleManagementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brown-100 flex">
+    <div className="w-full h-full bg-brown-100 flex">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 py-8 px-15">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-10">
             <h1 className="text-headline-2 text-brown-600">Article management</h1>
             <Button 
               variant="primary" 
@@ -139,46 +146,38 @@ export function ArticleManagementPage() {
           </div>
 
           {/* Search and Filter Bar */}
-          <div className="flex items-center gap-4 mb-6 bg-white rounded-lg border border-brown-300 p-4 shadow-sm">
+          <div className="h-[48px] flex items-center gap-4 mb-6 rounded-lg relative">
             <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brown-400 pointer-events-none" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-full text-brown-400 pointer-events-none" />
               <Input
                 type="text"
                 placeholder="Q Search..."
-                className="w-full h-12 pl-12 pr-4 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                className="w-[360px] h-12 py-0 pl-12 pr-4 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             
-            <Select value={statusFilter === "all" ? undefined : statusFilter} onValueChange={(value) => setStatusFilter(value || "all")}>
-              <SelectTrigger className="w-[140px] h-12 border-brown-300 bg-white body-1-brown-600 hover:border-brand-green transition-colors duration-300">
-                {statusFilter === "all" ? (
-                  <span className="body-1-brown-600">Status</span>
-                ) : (
-                  <SelectValue placeholder="Status" />
-                )}
+            <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
+              <SelectTrigger className="w-[200px] h-12 rounded-lg border-2 border-brown-300 bg-white body-1-brown-600 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green active:scale-[0.98]">
+                <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Published">Published</SelectItem>
-                <SelectItem value="Draft">Draft</SelectItem>
+              <SelectContent position="popper" className="bg-white rounded-lg shadow-lg border border-brown-200 mt-2 p-2">
+                <SelectItem value="all" className={getSelectItemClassName("all", statusFilter)}>All Status</SelectItem>
+                <SelectItem value="Published" className={getSelectItemClassName("Published", statusFilter)}>Published</SelectItem>
+                <SelectItem value="Draft" className={getSelectItemClassName("Draft", statusFilter)}>Draft</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={categoryFilter === "all" ? undefined : categoryFilter} onValueChange={(value) => setCategoryFilter(value || "all")}>
-              <SelectTrigger className="w-[140px] h-12 border-brown-300 bg-white body-1-brown-600 hover:border-brand-green transition-colors duration-300">
-                {categoryFilter === "all" ? (
-                  <span className="body-1-brown-600">Category</span>
-                ) : (
-                  <SelectValue placeholder="Category" />
-                )}
+            <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value)}>
+              <SelectTrigger className="w-[200px] h-12 rounded-lg border-2 border-brown-300 bg-white body-1-brown-600 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green active:scale-[0.98]">
+                <SelectValue placeholder="Category" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Category</SelectItem>
-                <SelectItem value="Cat">Cat</SelectItem>
-                <SelectItem value="General">General</SelectItem>
-                <SelectItem value="Inspiration">Inspiration</SelectItem>
+              <SelectContent position="popper" className="bg-white rounded-lg shadow-lg border border-brown-200 mt-2 p-2">
+                <SelectItem value="all" className={getSelectItemClassName("all", categoryFilter)}>All Category</SelectItem>
+                <SelectItem value="Cat" className={getSelectItemClassName("Cat", categoryFilter)}>Cat</SelectItem>
+                <SelectItem value="General" className={getSelectItemClassName("General", categoryFilter)}>General</SelectItem>
+                <SelectItem value="Inspiration" className={getSelectItemClassName("Inspiration", categoryFilter)}>Inspiration</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -199,10 +198,10 @@ export function ArticleManagementPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-brown-300 bg-brown-100">
-                    <th className="px-6 py-4 text-left body-1-brown-600 font-semibold">Article title</th>
-                    <th className="px-6 py-4 text-left body-1-brown-600 font-semibold">Category</th>
-                    <th className="px-6 py-4 text-left body-1-brown-600 font-semibold">Status</th>
-                    <th className="px-6 py-4 text-right body-1-brown-600 font-semibold">Actions</th>
+                    <th className="px-6 py-4 text-left body-1-brown-400 font-semibold">Article title</th>
+                    <th className="px-6 py-4 text-left body-1-brown-400 font-semibold">Category</th>
+                    <th className="px-6 py-4 text-left body-1-brown-400 font-semibold">Status</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -230,14 +229,14 @@ export function ArticleManagementPage() {
                           <div className="flex items-center justify-end gap-3">
                             <button
                               onClick={() => navigate(`/admin/edit-article/${article.id}`)}
-                              className="p-2 hover:bg-brand-green-soft rounded-lg transition-all duration-300 hover:scale-110 group"
+                              className="p-2 hover:bg-brand-green-soft rounded-lg transition-all duration-300 hover:scale-110 group cursor-pointer"
                               aria-label="Edit article"
                             >
                               <Edit className="w-5 h-5 text-brown-600 group-hover:text-brand-green transition-colors duration-300" />
                             </button>
                             <button
                               onClick={() => handleDeleteClick(article)}
-                              className="p-2 hover:bg-red-50 rounded-lg transition-all duration-300 hover:scale-110 group"
+                              className="p-2 hover:bg-red-50 rounded-lg transition-all duration-300 hover:scale-110 group cursor-pointer"
                               aria-label="Delete article"
                             >
                               <Trash2 className="w-5 h-5 text-brown-600 group-hover:text-brand-red transition-colors duration-300" />
@@ -267,8 +266,8 @@ export function ArticleManagementPage() {
                   onClick={() => handlePageChange(page)}
                   className={`w-10 h-10 rounded-lg body-1-brown-600 transition-all duration-300 shadow-sm ${
                     currentPage === page
-                      ? "bg-brown-600 text-white shadow-md scale-105"
-                      : "bg-white border border-brown-300 text-brown-600 hover:bg-brown-100 hover:shadow-md hover:scale-105 hover:border-brand-green"
+                      ? "bg-brown-200 text-white shadow-md scale-105"
+                      : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md hover:scale-105"
                   }`}
                 >
                   {page}

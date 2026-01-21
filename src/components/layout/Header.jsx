@@ -38,7 +38,7 @@ function NavBar() {
       )}
       
       <nav className={`w-full bg-brown-100 border-b border-brown-300 lg:h-[80px] lg:flex lg:items-center ${isMenuOpen ? 'fixed top-0 left-0 right-0 z-50 lg:relative lg:z-auto' : ''}`}>
-        <div className="w-full bg-brown-100 rounded-lg px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[80px] lg:px-30 lg:py-4">
+      <div className="w-full bg-brown-100 rounded-lg px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[80px] lg:px-30 lg:py-4">
         {/* Header Section */}
         <div className="w-full h-[48px] flex items-center justify-between lg:w-auto lg:h-auto">
           {/* Logo Section */}

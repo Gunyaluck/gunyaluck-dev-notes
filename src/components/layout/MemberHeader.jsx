@@ -87,7 +87,7 @@ export function MemberNavBar() {
       )}
       
       <nav className={`w-full bg-brown-100 border-b border-brown-300 lg:h-[80px] lg:flex lg:items-center lg:bg-white lg:border-b lg:border-brown-300 ${isMenuOpen ? 'fixed top-0 left-0 right-0 z-50 lg:relative lg:z-auto' : ''}`}>
-        <div className="w-full bg-brown-100 rounded-lg px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[80px] lg:px-30 lg:py-4 lg:bg-white lg:rounded-none">
+      <div className="w-full bg-brown-100 rounded-lg px-6 flex flex-col lg:flex-row lg:items-center lg:justify-between lg:h-[80px] lg:px-30 lg:py-4 lg:bg-white lg:rounded-none">
         {/* Logo Section - Left */}
         <div className="w-full h-[48px] flex items-center justify-between lg:w-auto lg:h-auto">
           <div className="w-[24px] h-[24px] flex items-center gap-1 lg:w-[44px] lg:h-[44px]">

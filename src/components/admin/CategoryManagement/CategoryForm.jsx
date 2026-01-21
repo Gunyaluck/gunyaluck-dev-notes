@@ -102,13 +102,13 @@ export function CategoryForm() {
         <div className="flex flex-col gap-6">
           {/* Category Name */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Category name</label>
+            <label className="body-1-brown-400 font-semibold">Category name</label>
             <Input
               type="text"
               placeholder="Category name"
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
-              className="w-full h-12 border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+              className="w-[480px] h-12 border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
             />
           </div>
         </div>

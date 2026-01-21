@@ -25,7 +25,7 @@ export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel =
 
   const handleAdminPanel = () => {
     // Navigate to admin landing page
-    navigate("/admin-landing-page");
+    navigate("/admin/article-management");
     if (onClose) onClose();
   };
 
@@ -101,13 +101,13 @@ export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel =
         </Button>
 
         <div className={showAdminPanel ? "" : "relative"}>
-          <Button
-            onClick={handleResetPassword}
-            variant="menu"
-          >
-            <RotateCcw className="w-5 h-5 text-brown-600 shrink-0" />
-            <span className="body-1-brown-600 flex-1">Reset password</span>
-          </Button>
+        <Button
+          onClick={handleResetPassword}
+          variant="menu"
+        >
+          <RotateCcw className="w-5 h-5 text-brown-600 shrink-0" />
+          <span className="body-1-brown-600 flex-1">Reset password</span>
+        </Button>
           {!showAdminPanel && (
             <div className="absolute bottom-0 left-4 right-4 h-px bg-brown-300"></div>
           )}
@@ -115,13 +115,13 @@ export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel =
 
         {showAdminPanel && (
           <div className="relative">
-            <Button
-              onClick={handleAdminPanel}
-              variant="menu"
-            >
-              <SquareArrowOutUpRight className="w-5 h-5 text-brown-600 shrink-0" />
-              <span className="body-1-brown-600 flex-1">Admin panel</span>
-            </Button>
+          <Button
+            onClick={handleAdminPanel}
+            variant="menu"
+          >
+            <SquareArrowOutUpRight className="w-5 h-5 text-brown-600 shrink-0" />
+            <span className="body-1-brown-600 flex-1">Admin panel</span>
+          </Button>
             <div className="absolute bottom-0 left-4 right-4 h-px bg-brown-300"></div>
           </div>
         )}

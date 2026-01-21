@@ -3,12 +3,12 @@ import { NotificationList } from "../../components/admin/Notification/Notificati
 
 export function NotificationPage() {
   return (
-    <div className="min-h-screen bg-brown-100 flex">
+    <div className="w-full h-full bg-brown-100 flex">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 py-10 px-15">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-headline-2 text-brown-600">Notification</h1>

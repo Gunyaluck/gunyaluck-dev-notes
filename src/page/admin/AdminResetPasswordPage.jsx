@@ -3,12 +3,12 @@ import { AdminResetPasswordForm } from "../../components/admin/ResetPassword/Adm
 
 export function AdminResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-brown-100 flex">
+    <div className="w-full h-full bg-brown-100 flex">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 py-10 px-15">
         <AdminResetPasswordForm />
       </div>
     </div>

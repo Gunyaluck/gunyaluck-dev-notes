@@ -101,7 +101,7 @@ export function AdminResetPasswordForm() {
           variant="primary"
           size="md"
           onClick={handleSave}
-          className="shadow-md hover:shadow-lg transition-shadow duration-300"
+          className="shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
         >
           Save
         </Button>
@@ -112,19 +112,19 @@ export function AdminResetPasswordForm() {
         <div className="flex flex-col gap-6">
           {/* Current Password */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Current password</label>
+            <label className="body-1-brown-400 font-semibold">Current password</label>
             <div className="relative">
               <Input
                 type={showCurrentPassword ? "text" : "password"}
                 placeholder="Current password"
                 value={formData.currentPassword}
                 onChange={(e) => handleInputChange("currentPassword", e.target.value)}
-                className="w-full h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                className="w-[480px] h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
               />
               <button
                 type="button"
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-brown-100 rounded-full transition-colors"
+                className="absolute left-110 top-1/2 -translate-y-1/2 p-1 hover:bg-brown-100 rounded-full transition-colors cursor-pointer"
                 aria-label={showCurrentPassword ? "Hide password" : "Show password"}
               >
                 {showCurrentPassword ? (
@@ -138,19 +138,19 @@ export function AdminResetPasswordForm() {
 
           {/* New Password */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">New password</label>
+            <label className="body-1-brown-400 font-semibold">New password</label>
             <div className="relative">
               <Input
                 type={showNewPassword ? "text" : "password"}
                 placeholder="New password"
                 value={formData.newPassword}
                 onChange={(e) => handleInputChange("newPassword", e.target.value)}
-                className="w-full h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                className="w-[480px] h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
               />
               <button
                 type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-brown-100 rounded-full transition-colors"
+                className="absolute left-110 top-1/2 -translate-y-1/2 p-1 hover:bg-brown-100 rounded-full transition-colors cursor-pointer"
                 aria-label={showNewPassword ? "Hide password" : "Show password"}
               >
                 {showNewPassword ? (
@@ -164,19 +164,19 @@ export function AdminResetPasswordForm() {
 
           {/* Confirm New Password */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Confirm new password</label>
+            <label className="body-1-brown-400 font-semibold">Confirm new password</label>
             <div className="relative">
               <Input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm new password"
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                className="w-full h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                className="w-[480px] h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-brown-100 rounded-full transition-colors"
+                className="absolute left-110 top-1/2 -translate-y-1/2 p-1 hover:bg-brown-100 rounded-full transition-colors cursor-pointer"
                 aria-label={showConfirmPassword ? "Hide password" : "Show password"}
               >
                 {showConfirmPassword ? (

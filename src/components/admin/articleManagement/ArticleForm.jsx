@@ -222,9 +222,9 @@ export function ArticleForm() {
         <div className="flex flex-col gap-6">
           {/* Thumbnail Image */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Thumbnail image</label>
-            <div className="flex items-start gap-4">
-              <div className="w-[200px] h-[150px] bg-brown-200 rounded-lg border border-brown-300 flex items-center justify-center overflow-hidden shrink-0">
+            <label className="body-1-brown-400 font-semibold">Thumbnail image</label>
+            <div className="flex items-end gap-4">
+              <div className="w-[460px] h-[260px] bg-brown-200 rounded-lg border border-brown-300 flex items-center justify-center overflow-hidden shrink-0">
                 {thumbnailPreview ? (
                   <img
                     src={thumbnailPreview}
@@ -259,17 +259,17 @@ export function ArticleForm() {
 
           {/* Category */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Category</label>
+            <label className="body-1-brown-400 font-semibold">Category</label>
             <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-              <SelectTrigger className="w-full h-[48px] rounded-lg border-2 border-brown-300 bg-white body-1-brown-500 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green active:scale-[0.98]">
-                <SelectValue className="body-1-brown-500" placeholder="Select category" />
+              <SelectTrigger className="w-[480px] h-[48px] rounded-lg border border-brown-300 bg-white body-1-brown-600 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green focus:ring-1 focus:ring-brand-green active:scale-[0.98]">
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
-              <SelectContent className="bg-white rounded-lg shadow-lg border border-brown-200 mt-2 p-2">
+              <SelectContent className="bg-white rounded-lg shadow-lg mt-2 p-2">
                 {availableCategories.map((category) => (
                   <SelectItem
                     key={category.value}
                     value={category.value}
-                    className="bg-white hover:bg-brand-green-soft hover:text-brand-green focus:bg-brand-green-soft focus:text-brand-green cursor-pointer rounded-md px-3 py-2 transition-all duration-200"
+                    className="bg-white hover:text-brand-green focus:text-brand-green cursor-pointer rounded-md px-3 py-2 transition-all duration-200 body-1-brown-400"
                   >
                     {category.label}
                   </SelectItem>
@@ -280,30 +280,30 @@ export function ArticleForm() {
 
           {/* Author Name */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Author name</label>
+            <label className="body-1-brown-400 font-semibold">Author name</label>
             <Input
               type="text"
               value={formData.authorName}
               readOnly
-              className="w-full h-12 border-brown-300 bg-brown-100 body-1-brown-600 text-brown-400 cursor-not-allowed"
+              className="w-full h-12 border border-brown-300 bg-brown-100 body-1-brown-600 text-brown-400 cursor-not-allowed focus:ring-0"
             />
           </div>
 
           {/* Title */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Title</label>
+            <label className="body-1-brown-400 font-semibold">Title</label>
             <Input
               type="text"
               placeholder="Article title"
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
-              className="w-full h-12 border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+              className="w-full h-12 border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-1 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
             />
           </div>
 
           {/* Introduction */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">
+            <label className="body-1-brown-400 font-semibold">
               Introduction (max 120 letters)
             </label>
             <textarea
@@ -312,7 +312,7 @@ export function ArticleForm() {
               onChange={(e) => handleInputChange("introduction", e.target.value)}
               maxLength={120}
               rows={4}
-              className="w-full px-4 py-3 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300 resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-1 focus:ring-brand-green focus:border-brand-green transition-all duration-300 resize-none"
             />
             <div className="flex justify-end">
               <span className={`body-3 ${formData.introduction.length >= 120 ? "text-brand-red" : "text-brown-400"}`}>
@@ -323,13 +323,13 @@ export function ArticleForm() {
 
           {/* Content */}
           <div className="flex flex-col gap-3">
-            <label className="body-1-brown-600 font-semibold">Content</label>
+            <label className="body-1-brown-400 font-semibold">Content</label>
             <textarea
               placeholder="Content"
               value={formData.content}
               onChange={(e) => handleInputChange("content", e.target.value)}
               rows={12}
-              className="w-full px-4 py-3 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300 resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-1 focus:ring-brand-green focus:border-brand-green transition-all duration-300 resize-none"
             />
           </div>
         </div>

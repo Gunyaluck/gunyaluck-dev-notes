@@ -71,12 +71,12 @@ export function CategoryManagementPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brown-100 flex">
+    <div className="w-full h-full bg-brown-100 flex">
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 py-10 px-15">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-headline-2 text-brown-600">Category management</h1>
@@ -92,7 +92,7 @@ export function CategoryManagementPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="flex items-center gap-4 mb-6 bg-white rounded-lg border border-brown-300 p-4 shadow-sm">
+        <div className="w-[360px] h-[48px] flex items-center gap-4 mb-6 rounded-lg relative">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-brown-400 pointer-events-none" />
             <Input
@@ -111,7 +111,7 @@ export function CategoryManagementPage() {
             <thead>
               <tr className="border-b border-brown-300 bg-brown-100">
                 <th className="px-6 py-4 text-left body-1-brown-600 font-semibold">Category name</th>
-                <th className="px-6 py-4 text-right body-1-brown-600 font-semibold">Actions</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -128,14 +128,14 @@ export function CategoryManagementPage() {
                       <div className="flex items-center justify-end gap-3">
                         <button
                           onClick={() => navigate(`/admin/edit-category/${category.id}`)}
-                          className="p-2 hover:bg-brand-green-soft rounded-lg transition-all duration-300 hover:scale-110 group"
+                          className="p-2 hover:bg-brand-green-soft rounded-lg transition-all duration-300 hover:scale-110 group cursor-pointer"
                           aria-label="Edit category"
                         >
                           <Edit className="w-5 h-5 text-brown-600 group-hover:text-brand-green transition-colors duration-300" />
                         </button>
                         <button
                           onClick={() => handleDeleteClick(category)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-all duration-300 hover:scale-110 group"
+                          className="p-2 hover:bg-red-50 rounded-lg transition-all duration-300 hover:scale-110 group cursor-pointer"
                           aria-label="Delete category"
                         >
                           <Trash2 className="w-5 h-5 text-brown-600 group-hover:text-brand-red transition-colors duration-300" />
