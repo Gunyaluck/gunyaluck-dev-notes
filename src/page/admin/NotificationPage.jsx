@@ -1,5 +1,5 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { NotificationList } from "@/components/admin/Notification/NotificationList";
+import { NotificationList } from "@/components/admin/Notification/NotificationList.jsx";
 
 export function NotificationPage() {
   return (
