@@ -1,5 +1,5 @@
-import { AdminSidebar } from "../../components/admin/AdminSidebar";
-import { ArticleForm } from "../../components/admin/ArticleManagement/ArticleForm";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { ArticleForm } from "@/components/admin/ArticleManagement/ArticleForm";
 
 export function CreateArticlePage() {
   return (
