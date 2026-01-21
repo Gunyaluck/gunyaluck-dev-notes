@@ -15,13 +15,16 @@ const mockNotifications = [
         author: "Jacob Lash",
         authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
         message: "Comment on the article you have commented on.",
-        timestamp: "2024-09-12T18:30:00Z",
+        timestamp: "2024-09-12T18:30:00Z", // 12 September 2024 at 18:30
         type: "comment"
     }
 ];
 
-export function NotificationDropdown({ isOpen, onClose }) {
+export function NotificationDropdown({ isOpen, onClose, mockNotifications: customNotifications }) {
     if (!isOpen) return null;
+
+    // Use custom mock notifications if provided, otherwise use default
+    const notifications = customNotifications || mockNotifications;
 
     const formatNotificationTime = (timestamp) => {
         const now = new Date();
@@ -44,14 +47,14 @@ export function NotificationDropdown({ isOpen, onClose }) {
         <>
             {/* Backdrop */}
             <div 
-                className="fixed inset-0 z-40"
+                className="fixed inset-0 z-60"
                 onClick={onClose}
             />
             
             {/* Dropdown */}
-            <div className="absolute top-full right-[-23px] mt-2 z-50 w-[343px] h-[208px] bg-white rounded-lg shadow-lg border border-brown-100 lg:right-0">
+            <div className="absolute top-full right-[-23px] mt-2 z-60 w-[343px] bg-white rounded-lg shadow-lg border border-brown-100 lg:right-0 max-h-[400px] overflow-y-auto">
                 <div className="px-4 py-3 flex flex-col gap-4">
-                    {mockNotifications.map((notification, index) => (
+                    {notifications.map((notification, index) => (
                         <div 
                             key={notification.id} 
                             className={`flex items-start gap-3`}
@@ -76,9 +79,9 @@ export function NotificationDropdown({ isOpen, onClose }) {
                             {/* Notification Content */}
                             <div className="flex-1 min-w-0">
                                 <p className="body-1-brown-600">
-                                    {notification.author} <span className="body-1-brown-400">{notification.message}</span>
+                                    <span className="font-semibold">{notification.author}</span> <span className="body-1-brown-400">{notification.message}</span>
                                 </p>
-                                <p className="body-3-green-500 mt-1">
+                                <p className="body-3 text-brand-orange mt-1">
                                     {formatNotificationTime(notification.timestamp)}
                                 </p>
                             </div>

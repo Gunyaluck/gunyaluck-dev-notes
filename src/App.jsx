@@ -8,6 +8,7 @@ import { SuccessMessage } from "./components/auth/SuccessMessage";
 import { ViewArticlePage } from "./page/ViewArticlePage";
 import { ProfilePage } from "./page/ProfilePage";
 import { ResetPasswordPage } from "./page/ResetPasswordPage";
+import { AdminLandingPage } from "./page/admin/AdminLandingPage";
   
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/member-landing-page" element={<LandingPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/admin-landing-page" element={<AdminLandingPage />} />
       </Routes>
       <Toaster position="bottom-right" />
     </BrowserRouter>
