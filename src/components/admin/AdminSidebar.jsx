@@ -29,7 +29,11 @@ export function AdminSidebar() {
     // Check if current path matches or starts with the menu path
     // This allows "Article management" to be active on both /admin/article-management and /admin/create-article
     if (path === "/admin/article-management") {
-      return location.pathname === path || location.pathname.startsWith("/admin/create-article");
+      return location.pathname === path || location.pathname.startsWith("/admin/create-article") || location.pathname.startsWith("/admin/edit-article");
+    }
+    // This allows "Category management" to be active on both /admin/category-management and /admin/create-category
+    if (path === "/admin/category-management") {
+      return location.pathname === path || location.pathname.startsWith("/admin/create-category") || location.pathname.startsWith("/admin/edit-category");
     }
     return location.pathname === path;
   };

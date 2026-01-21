@@ -1,7 +1,7 @@
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
-import { ArticleForm } from "../../components/admin/ArticleManagement/ArticleForm";
+import { AdminProfileForm } from "../../components/admin/profile/AdminProfileForm";
 
-export function CreateArticlePage() {
+export function AdminProfilePage() {
   return (
     <div className="min-h-screen bg-brown-100 flex">
       {/* Sidebar */}
@@ -9,7 +9,7 @@ export function CreateArticlePage() {
 
       {/* Main Content */}
       <div className="flex-1 p-8">
-        <ArticleForm />
+        <AdminProfileForm />
       </div>
     </div>
   );
