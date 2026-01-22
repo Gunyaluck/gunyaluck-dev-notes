@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import NavBar from "../components/layout/Header";
-import { MemberNavBar } from "../components/layout/MemberHeader";
+import { MemberNavBar } from "../components/member/MemberHeader";
 import { HeroSection } from "../components/landing/HeroSection";
 import { Footer } from "../components/layout/Footer";
 import { ArticleGrid } from "../components/landing/ArticleGrid";

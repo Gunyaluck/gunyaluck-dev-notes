@@ -1,4 +1,4 @@
-import { MemberNavBar } from "../components/layout/MemberHeader";
+import { MemberNavBar } from "../components/member/MemberHeader";
 import { ResetPasswordForm } from "../components/member/ResetPassword/ResetPasswordForm";
 
 export function ResetPasswordPage() {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { AdminHeader } from "../../components/layout/AdminHeader";
+import { AdminHeader } from "../../components/admin/AdminHeader";
 import { HeroSection } from "../../components/landing/HeroSection";
 import { Footer } from "../../components/layout/Footer";
 import { ArticleGrid } from "../../components/landing/ArticleGrid";

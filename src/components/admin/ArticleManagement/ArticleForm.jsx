@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Image as ImageIcon, Upload, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { Button } from "../../common/Button";
@@ -8,6 +8,7 @@ import { Input } from "../../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { categories } from "../../../data/categories";
 import { DeleteArticleModal } from "./DeleteArticleModal";
+import { ThumbnailUpload } from "./ThumbnailUpload";
 
 export function ArticleForm() {
   const navigate = useNavigate();
@@ -70,16 +71,9 @@ export function ArticleForm() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleThumbnailChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, thumbnail: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setThumbnailPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleThumbnailChange = (file, preview) => {
+    setFormData((prev) => ({ ...prev, thumbnail: file }));
+    setThumbnailPreview(preview);
   };
 
   const handleSaveDraft = () => {
@@ -221,41 +215,10 @@ export function ArticleForm() {
       <div className="bg-white rounded-lg border border-brown-300 p-8 shadow-md">
         <div className="flex flex-col gap-6">
           {/* Thumbnail Image */}
-          <div className="flex flex-col gap-3">
-            <label className="body-1-brown-400 font-semibold">Thumbnail image</label>
-            <div className="flex items-end gap-4">
-              <div className="w-[460px] h-[260px] bg-brown-200 rounded-lg border border-brown-300 flex items-center justify-center overflow-hidden shrink-0">
-                {thumbnailPreview ? (
-                  <img
-                    src={thumbnailPreview}
-                    alt="Thumbnail preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <ImageIcon className="w-12 h-12 text-brown-400" />
-                )}
-              </div>
-              <div className="flex-1 flex items-start">
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleThumbnailChange}
-                    className="hidden"
-                  />
-                  <Button
-                    variant="outline"
-                    size="md"
-                    type="button"
-                    className="shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center gap-2"
-                  >
-                    <Upload className="w-5 h-5" />
-                    Upload thumbnail image
-                  </Button>
-                </label>
-              </div>
-            </div>
-          </div>
+          <ThumbnailUpload
+            thumbnailPreview={thumbnailPreview}
+            onThumbnailChange={handleThumbnailChange}
+          />
 
           {/* Category */}
           <div className="flex flex-col gap-3">

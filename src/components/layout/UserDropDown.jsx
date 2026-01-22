@@ -4,22 +4,39 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../common/Button";
 import { NotificationDropdown } from "./NotificationDropdown";
 
-export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel = false, mockNotifications }) {
+export function UserDropDown({ admin, user, onClose, hideBell = false, showAdminPanel = false, mockNotifications }) {
   const navigate = useNavigate();
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
   
+  // Determine if this is admin mode (check showAdminPanel or admin prop)
+  const isAdmin = showAdminPanel || !!admin;
+  
+  // Use admin data if available, otherwise use user data
+  const displayUser = isAdmin ? {
+    name: admin?.adminName || admin?.name || "Admin",
+    avatar: admin?.adminAvatar || admin?.avatar || null,
+  } : (user || { name: "User", avatar: null });
+
   // Mock: มีการแจ้งเตือน 2 รายการ
   const hasNotifications = true;
 
   const handleProfile = () => {
     // Navigate to profile page
-    navigate("/profile");
+    if (isAdmin) {
+      navigate("/admin/profile");
+    } else {
+      navigate("/profile");
+    }
     if (onClose) onClose();
   };
 
   const handleResetPassword = () => {
     // Navigate to reset password page
-    navigate("/reset-password");
+    if (isAdmin) {
+      navigate("/admin/reset-password");
+    } else {
+      navigate("/reset-password");
+    }
     if (onClose) onClose();
   };
 
@@ -33,6 +50,7 @@ export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel =
     // Clear login state from localStorage
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("user");
+    localStorage.removeItem("isAdmin");
     
     // Close dropdown
     if (onClose) onClose();
@@ -46,19 +64,23 @@ export function UserDropDown({ user, onClose, hideBell = false, showAdminPanel =
       {/* User Info Section */}
       <div className="flex items-center gap-3 p-4">
         <div className="w-10 h-10 rounded-full bg-brown-300 flex items-center justify-center shrink-0 overflow-hidden">
-          {user?.avatar ? (
+          {displayUser?.avatar ? (
             <img
-              src={user.avatar}
-              alt={user.name || "User"}
+              src={displayUser.avatar}
+              alt={displayUser.name || (isAdmin ? "Admin" : "User")}
               className="w-full h-full object-cover"
             />
           ) : (
-            <User className="w-6 h-6 text-brown-600" />
+            <div className="w-full h-full bg-brown-300 flex items-center justify-center">
+              <span className="text-headline-4 text-brown-600">
+                {displayUser?.name ? displayUser.name.charAt(0).toUpperCase() : (isAdmin ? "A" : "U")}
+              </span>
+            </div>
           )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-headline-4 font-semibold text-brown-600 truncate">
-            {user?.name || "User"}
+            {displayUser?.name || (isAdmin ? "Admin" : "User")}
           </p>
         </div>
         {!hideBell && (

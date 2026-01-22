@@ -16,7 +16,7 @@ export function AdminSidebar() {
   ];
 
   const bottomItems = [
-    { id: "website", label: "hh. website", icon: ExternalLink, path: "/" },
+    { id: "website", label: "hh. website", icon: ExternalLink, path: "/admin-landing-page" },
     { id: "logout", label: "Log out", icon: LogOut, path: "/admin-login" },
   ];
 

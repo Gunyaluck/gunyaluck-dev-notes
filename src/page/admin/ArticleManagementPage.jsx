@@ -124,7 +124,7 @@ export function ArticleManagementPage() {
     setArticleToDelete(null);
   };
 
-  return (
+    return (
     <div className="w-full h-full bg-brown-100 flex">
       {/* Sidebar */}
       <AdminSidebar />
@@ -284,5 +284,5 @@ export function ArticleManagementPage() {
           />
       </div>
     </div>
-  );
+    );
 }
