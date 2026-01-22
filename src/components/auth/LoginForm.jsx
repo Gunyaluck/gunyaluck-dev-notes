@@ -8,6 +8,8 @@ import { AuthFooter } from "./AuthFooter";
 import { Button } from "../common/Button";
 
 export function LoginForm({ isAdmin = false }) {
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -88,7 +90,57 @@ export function LoginForm({ isAdmin = false }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    
+    if (!validateForm()) {
+      console.log("Form validation failed");
+      return;
+    }
+
+    // Check if admin credentials FIRST (before checking registered emails)
+    const ADMIN_EMAIL = "gunyaluck1@gmail.com";
+    const ADMIN_PASSWORD = "123456";
+    
+    if (formData.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase() && formData.password.trim() === ADMIN_PASSWORD) {
+      console.log("Admin credentials matched!");
+      // Admin login
+      const adminData = {
+        name: "Admin",
+        username: "admin",
+        email: ADMIN_EMAIL,
+        avatar: null,
+        isAdmin: true,
+      };
+      localStorage.setItem("user", JSON.stringify(adminData));
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("isAdmin", "true");
+
+      // Debug: ตรวจสอบว่าข้อมูลถูกเก็บไว้หรือไม่
+      console.log("Admin login successful!");
+      console.log("isAdmin:", localStorage.getItem("isAdmin"));
+      console.log("isLoggedIn:", localStorage.getItem("isLoggedIn"));
+      console.log("user:", localStorage.getItem("user"));
+      
+      navigate("/admin-landing-page");
+      return;
+    }
+
+    // Skip admin email from regular user login check
+    if (formData.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase()) {
+      // Admin email but wrong password
+      if (isMobile) {
+        setErrors({
+          email: "error",
+          password: "error",
+        });
+      } else {
+        setErrors({
+          email: "error",
+          password: "error",
+        });
+        setShowAlertIncorrect(true);
+      }
+      return;
+    }
 
     // First, check if email is registered in localStorage
     if (checkEmailRegistered(formData.email)) {
@@ -176,7 +228,9 @@ export function LoginForm({ isAdmin = false }) {
     }
   };
 
-  const navigate = useNavigate();
+  const handleAdminLogin = () => {
+    navigate("/admin-landing-page");
+  };
 
 
   return (
@@ -283,6 +337,7 @@ export function LoginForm({ isAdmin = false }) {
               variant="primary"
               size="md"
               width="141"
+              onClick={isAdmin ? handleAdminLogin : handleSubmit}
             >
               Log in
             </Button>

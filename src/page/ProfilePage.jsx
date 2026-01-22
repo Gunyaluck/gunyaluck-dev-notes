@@ -1,4 +1,4 @@
-import { MemberNavBar } from "../components/layout/MemberHeader";
+import { MemberNavBar } from "../components/member/MemberHeader";
 import { ProfileForm } from "../components/member/ProfilePage/ProfileForm";
 
 export function ProfilePage() {
