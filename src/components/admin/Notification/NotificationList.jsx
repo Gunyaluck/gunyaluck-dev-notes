@@ -27,7 +27,7 @@ const formatNotificationTime = (timestamp) => {
   const now = new Date();
   const notificationDate = new Date(timestamp);
   const diffInHours = (now - notificationDate) / (1000 * 60 * 60);
-  
+
   if (diffInHours < 24) {
     const hours = Math.floor(diffInHours);
     if (hours === 0) {
@@ -36,7 +36,7 @@ const formatNotificationTime = (timestamp) => {
     }
     return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
   }
-  
+
   const days = Math.floor(diffInHours / 24);
   return `${days} ${days === 1 ? 'day' : 'days'} ago`;
 };
@@ -82,14 +82,13 @@ export function NotificationList() {
               <span className="font-semibold">{notification.author}</span>{" "}
               <span className="body-1-brown-400">{notification.message}</span>
             </p>
-            
             {/* Comment (if exists) */}
             {notification.comment && (
               <p className="body-1-brown-400 mb-2 italic">
                 "{notification.comment}"
               </p>
             )}
-            
+
             {/* Timestamp */}
             <p className="body-3 text-brand-orange">
               {formatNotificationTime(notification.timestamp)}

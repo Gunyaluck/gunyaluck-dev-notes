@@ -7,7 +7,7 @@ import { ShareButtons } from "./ShareButtons";
 import { CommentForm } from "./CommentForm";
 import { ArticleAuthorSidebar } from "./ArticleAuthorSidebar";
 import { LoadingSpinner } from "../common/LoadingSpinner";
-
+import axios from "axios";
 
 export function ArticleContent({ id }) {
     const [article, setArticle] = useState(null);
@@ -42,6 +42,7 @@ export function ArticleContent({ id }) {
     const [comments, setComments] = useState(mockComments);
     const [reactionCount, setReactionCount] = useState(321);
     const [showAlertCreateAccount, setShowAlertCreateAccount] = useState(false);
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     // Simulate: All users are not logged in
     const isLoggedIn = false;
@@ -53,19 +54,11 @@ export function ArticleContent({ id }) {
         setError(null);
 
         try {
-            const response = await fetch(`https://blog-post-project-api.vercel.app/posts/${id}`);
+            const response = await axios.get(`${API_BASE_URL}/posts/${id}`);
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch article: ${response.status}`);
-            }
-
-        const data = await response.json();
-        setArticle(data);
-
-            console.log(data);
+            setArticle(response.data);
         } catch (err) {
-            setError(err.message);
-            console.error("Error fetching article:", err);
+            setError(err.response.data.message);
         } finally {
             setIsLoading(false);
         }

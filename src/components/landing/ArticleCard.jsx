@@ -12,12 +12,13 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  
   const fetchArticlesData = async (pageNum = 1, append = false) => {
     try {
       const categoryParam = selectedCategory === "All" ? undefined : selectedCategory;
 
-      const response = await axios.get("https://blog-post-project-api.vercel.app/posts",
+      const response = await axios.get(`${API_BASE_URL}/posts`,
         {
           params: {
             page: pageNum,
