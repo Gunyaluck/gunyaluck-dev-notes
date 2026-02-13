@@ -1,19 +1,21 @@
 import { Input } from "../ui/input";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { ErrorMessage } from "./ErrorMessage";
 import { AuthFooter } from "./AuthFooter";
 import { Button } from "../common/Button";
+import { useAuth } from "../../contexts/authentication";
 
 export function SignUpForm() {
+  const { register, loading, error } = useAuth();
+
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState({
+  const [formErrors, setFormErrors] = useState({
     name: "",
     username: "",
     email: "",
@@ -24,33 +26,7 @@ export function SignUpForm() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-  const checkEmailExists = (email) => {
-    // Check if email exists in localStorage
-    const registeredEmails = localStorage.getItem("registeredEmails");
-    if (registeredEmails) {
-      try {
-        const emails = JSON.parse(registeredEmails);
-        return emails.includes(email.toLowerCase());
-      } catch (error) {
-        console.error("Error parsing registered emails:", error);
-      }
-    }
-    
-    // Also check if current user has this email
-    const currentUser = localStorage.getItem("user");
-    if (currentUser) {
-      try {
-        const userData = JSON.parse(currentUser);
-        return userData.email?.toLowerCase() === email.toLowerCase();
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
-    
-    return false;
+    setFormErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
@@ -63,8 +39,6 @@ export function SignUpForm() {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = "Email must be a valid email";
-    } else if (checkEmailExists(email)) {
-      newErrors.email = "Email is already taken, Please try another email.";
     }
     if (!password.trim()) {
       newErrors.password = "Password is required";
@@ -72,58 +46,22 @@ export function SignUpForm() {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    setErrors(newErrors);
+    setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Save user data to localStorage for login state
-      const userData = {
-        name: formData.name,
-        username: formData.username,
-        email: formData.email,
-        avatar: null, // Can be updated later
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("isLoggedIn", "true");
-      
-      // Add email to registered emails list
-      const registeredEmails = localStorage.getItem("registeredEmails");
-      let emails = [];
-      if (registeredEmails) {
-        try {
-          emails = JSON.parse(registeredEmails);
-        } catch (error) {
-          console.error("Error parsing registered emails:", error);
-        }
-      }
-      if (!emails.includes(formData.email.toLowerCase())) {
-        emails.push(formData.email.toLowerCase());
-        localStorage.setItem("registeredEmails", JSON.stringify(emails));
-      }
-      
-      // Store username with email mapping for login
-      const userCredentials = localStorage.getItem("userCredentials");
-      let credentials = {};
-      if (userCredentials) {
-        try {
-          credentials = JSON.parse(userCredentials);
-        } catch (error) {
-          console.error("Error parsing user credentials:", error);
-        }
-      }
-      credentials[formData.email.toLowerCase()] = {
-        username: formData.username,
-        name: formData.name,
-      };
-      localStorage.setItem("userCredentials", JSON.stringify(credentials));
-      
-      navigate("/success");
-    }
+    const isValid = validateForm();
+
+    if (!isValid) return;
+
+    await register({
+      name: formData.name.trim(),
+      username: formData.username.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+    });
   };
 
 
@@ -149,14 +87,15 @@ export function SignUpForm() {
                 type="text"
                 placeholder="Full name"
                 className={`w-full h-12 px-4 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                  errors.name
+                  formErrors.name
                     ? "border-red-500 focus:border-red-500 focus-visible:border-red-500"
                     : "border-brown-300 focus:border-brown-500 focus-visible:border-brown-500"
                 }`}
+                disabled={loading}
                 value={formData.name}
                 onChange={handleInputChange}
               />
-              <ErrorMessage message={errors.name} />
+              <ErrorMessage message={formErrors.name} />
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -169,14 +108,15 @@ export function SignUpForm() {
                 type="text"
                 placeholder="Username"
                 className={`w-full h-12 px-4 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                  errors.username
+                  formErrors.username
                     ? "border-red-500 focus:border-red-500 focus-visible:border-red-500"
                     : "border-brown-300 focus:border-brown-500 focus-visible:border-brown-500"
                 }`}
+                disabled={loading}
                 value={formData.username}
                 onChange={handleInputChange}
               />
-              <ErrorMessage message={errors.username} />
+              <ErrorMessage message={formErrors.username} />
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -189,27 +129,25 @@ export function SignUpForm() {
                 type="email"
                 placeholder="Email"
                 className={`w-full h-12 px-4 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                  errors.email ||
+                  formErrors.email ||
                   (formData.email &&
-                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ||
-                  (formData.email && checkEmailExists(formData.email))
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
                     ? "border-red-500 focus:border-red-500 focus-visible:border-red-500"
                     : "border-brown-300 focus:border-brown-500 focus-visible:border-brown-500"
                 }`}
+                disabled={loading}
                 value={formData.email}
                 onChange={handleInputChange}
                 onInvalid={(e) => e.preventDefault()}
               />
-              <ErrorMessage 
+              <ErrorMessage
                 message={
-                  errors.email || 
-                  (formData.email && checkEmailExists(formData.email))
-                    ? errors.email || "Email is already taken, Please try another email."
-                    : (formData.email &&
-                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-                    ? "Email must be a valid email"
+                  formErrors.email ||
+                  (formData.email &&
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+                    ? formErrors.email || "Email must be a valid email"
                     : null
-                } 
+                }
               />
             </div>
 
@@ -224,11 +162,12 @@ export function SignUpForm() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   className={`w-full h-12 px-4 pr-12 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus-visible:ring-0 focus-visible:ring-offset-0 ${
-                    errors.password ||
+                    formErrors.password ||
                     (formData.password && formData.password.length < 6)
                       ? "border-red-500 focus:border-red-500 focus-visible:border-red-500"
                       : "border-brown-300 focus:border-brown-500 focus-visible:border-brown-500"
                   }`}
+                  disabled={loading}
                   value={formData.password}
                   onChange={handleInputChange}
                   onInvalid={(e) => e.preventDefault()}
@@ -240,19 +179,19 @@ export function SignUpForm() {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5 text-brown-400" />
-                  ) : (
                     <Eye className="w-5 h-5 text-brown-400" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-brown-400" />
                   )}
                 </button>
               </div>
-              <ErrorMessage 
+              <ErrorMessage
                 message={
-                  errors.password || 
+                  formErrors.password ||
                   (formData.password && formData.password.length < 6
                     ? "Password must be at least 6 characters"
                     : null)
-                } 
+                }
               />
             </div>
 
@@ -261,10 +200,19 @@ export function SignUpForm() {
               variant="primary"
               size="md"
               width="141"
+              disabled={loading}
             >
-              Sign up
+              {loading ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : "Sign up"}
             </Button>
           </form>
+
+          {error && (
+            <div className="w-full mt-4 text-center">
+              <span className="body-1-brown-400 text-brand-red">
+                {error}
+              </span>
+            </div>
+          )}
 
           <AuthFooter type="signup" />
       </div>

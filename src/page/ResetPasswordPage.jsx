@@ -1,11 +1,11 @@
-import { MemberNavBar } from "../components/member/MemberHeader";
+import NavBar from "../components/layout/Header";
 import { ResetPasswordForm } from "../components/member/ResetPassword/ResetPasswordForm";
 
 export function ResetPasswordPage() {
-    return (
-        <>
-            <MemberNavBar />
-            <ResetPasswordForm />
-        </>
-    );
+  return (
+    <>
+      <NavBar />
+      <ResetPasswordForm />
+    </>
+  );
 }

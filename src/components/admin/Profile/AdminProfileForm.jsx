@@ -1,18 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { User, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
+import { useAuth } from "../../../contexts/authentication";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function AdminProfileForm() {
-  const navigate = useNavigate();
+  const { user, fetchUser } = useAuth();
   const [formData, setFormData] = useState({
-    name: "Thompson P.",
-    username: "thompson",
-    email: "thompson.p@gmail.com",
-    bio: "I am a pet enthusiast and freelance writer who specializes in animal behavior and care. With a deep love for cats, I enjoy sharing insights on feline companionship and wellness. When I'm not writing, I spends time volunteering at my local animal shelter, helping cats find loving homes.",
+    name: "",
+    username: "",
+    bio: "",
   });
+
+  const [save, setSaveing] = useState(false);
+
+  useEffect (() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        username: user.username || "",
+        bio: user.bio || "",
+      });
+    }
+  },[user])
 
   const [profilePicture, setProfilePicture] = useState(
     "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=100&h=100&fit=crop"

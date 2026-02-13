@@ -4,14 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../common/Button";
 import { NotificationDropdown } from "./NotificationDropdown";
 
-export function UserDropDown({ admin, user, onClose, hideBell = false, showAdminPanel = false, mockNotifications }) {
+export function UserDropDown({ admin, user, onClose, onLogout, hideBell = false, showAdminPanel = false, mockNotifications }) {
   const navigate = useNavigate();
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
-  
-  // Determine if this is admin mode (check showAdminPanel or admin prop)
+
   const isAdmin = showAdminPanel || !!admin;
-  
-  // Use admin data if available, otherwise use user data
+
   const displayUser = isAdmin ? {
     name: admin?.adminName || admin?.name || "Admin",
     avatar: admin?.adminAvatar || admin?.avatar || null,
@@ -47,16 +45,15 @@ export function UserDropDown({ admin, user, onClose, hideBell = false, showAdmin
   };
 
   const handleLogout = () => {
-    // Clear login state from localStorage
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
-    localStorage.removeItem("isAdmin");
-    
-    // Close dropdown
     if (onClose) onClose();
-    
-    // Navigate to regular landing page (not logged in)
-    navigate("/");
+    if (onLogout) {
+      onLogout();
+    } else {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("user");
+      localStorage.removeItem("isAdmin");
+      navigate("/");
+    }
   };
 
   return (

@@ -8,6 +8,7 @@ import { CommentForm } from "./CommentForm";
 import { ArticleAuthorSidebar } from "./ArticleAuthorSidebar";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import axios from "axios";
+import { useAuth } from "../../contexts/authentication";
 
 export function ArticleContent({ id }) {
     const [article, setArticle] = useState(null);
@@ -43,9 +44,8 @@ export function ArticleContent({ id }) {
     const [reactionCount, setReactionCount] = useState(321);
     const [showAlertCreateAccount, setShowAlertCreateAccount] = useState(false);
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-    // Simulate: All users are not logged in
-    const isLoggedIn = false;
+    const { isAuthenticated } = useAuth();
+    const isLoggedIn = isAuthenticated;
     
     const fetchArticleContent = async () => {
         if (!id) return;

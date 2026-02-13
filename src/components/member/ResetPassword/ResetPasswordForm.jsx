@@ -1,90 +1,110 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { User, RotateCcw, Eye, EyeOff } from "lucide-react";
 import { Button } from "../../common/Button";
 import { ErrorMessage } from "../../auth/ErrorMessage";
-import { ResetPasswordModal } from "../../common/ResetPasswordModal";
+import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
+import { useAuth } from "../../../contexts/authentication";
+import { showSuccessToast } from "../../common/Toast";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function ResetPasswordForm() {
-    const [user, setUser] = useState(null);
-    const [formData, setFormData] = useState({
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.currentPassword.trim()) {
+      newErrors.currentPassword = "Current password is required";
+    }
+
+    if (!formData.newPassword.trim()) {
+      newErrors.newPassword = "New password is required";
+    } else if (formData.newPassword.length < 6) {
+      newErrors.newPassword = "Password must be at least 6 characters";
+    }
+
+    if (!formData.confirmPassword.trim()) {
+      newErrors.confirmPassword = "Please confirm your new password";
+    } else if (formData.newPassword !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleResetPassword = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      setShowModal(true);
+    }
+  };
+
+  const handleConfirmReset = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowModal(false);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await axios.put(
+        `${API_BASE_URL}/auth/reset-password`,
+        {
+          oldPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setShowModal(false);
+      setFormData({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-    });
-    const [errors, setErrors] = useState({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-    });
-    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const navigate = useNavigate();
+      });
+      setErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      showSuccessToast("Password updated", "Your password has been changed successfully", true);
+      navigate("/profile");
+    } catch (error) {
+      const message = error.response?.data?.error || "Failed to update password";
+      showSuccessToast("Error", message, false);
+      setErrors((prev) => ({ ...prev, currentPassword: message }));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-    useEffect(() => {
-        // Load user data from localStorage
-        const userData = localStorage.getItem("user");
-        if (userData) {
-            try {
-                const parsedUser = JSON.parse(userData);
-                setUser(parsedUser);
-            } catch (error) {
-                console.error("Error parsing user data:", error);
-            }
-        }
-    }, []);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-
-        if (!formData.currentPassword.trim()) {
-            newErrors.currentPassword = "Current password is required";
-        }
-
-        if (!formData.newPassword.trim()) {
-            newErrors.newPassword = "New password is required";
-        } else if (formData.newPassword.length < 6) {
-            newErrors.newPassword = "Password must be at least 6 characters";
-        }
-
-        if (!formData.confirmPassword.trim()) {
-            newErrors.confirmPassword = "Please confirm your new password";
-        } else if (formData.newPassword !== formData.confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleResetPassword = (e) => {
-        e.preventDefault();
-        if (validateForm()) {
-            // Show modal for confirmation
-            setShowModal(true);
-        }
-    };
-
-    const handleConfirmReset = () => {
-        // Here you would typically call an API to reset the password
-        // For now, we'll just show a success message and redirect
-        console.log("Password reset successful");
-        setShowModal(false);
-        // You can add a success toast here
-        navigate("/profile");
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+  const handleCloseModal = () => {
+    if (!submitting) setShowModal(false);
+  };
 
     const handleProfileClick = () => {
         navigate("/profile");
@@ -304,6 +324,7 @@ export function ResetPasswordForm() {
                                                 variant="primary"
                                                 size="md"
                                                 width="207"
+                                                disabled={submitting}
                                             >
                                                 Reset password
                                             </Button>
@@ -430,6 +451,7 @@ export function ResetPasswordForm() {
                                         variant="primary"
                                         size="md"
                                         width="207"
+                                        disabled={submitting}
                                     >
                                         Reset password
                                     </Button>
@@ -441,10 +463,11 @@ export function ResetPasswordForm() {
             </div>
 
             {/* Reset Password Modal */}
-            <ResetPasswordModal
+            <ResetPasswordConfirm
                 isOpen={showModal}
                 onClose={handleCloseModal}
                 onConfirm={handleConfirmReset}
+                isLoading={submitting}
             />
         </div>
     );

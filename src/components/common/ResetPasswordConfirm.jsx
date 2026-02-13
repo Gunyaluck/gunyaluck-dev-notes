@@ -1,15 +1,19 @@
 import { X } from "lucide-react";
 import { Button } from "./Button";
 
-export function ResetPasswordModal({ isOpen, onClose, onConfirm }) {
+export function ResetPasswordConfirm({ isOpen, onClose, onConfirm, isLoading = false }) {
   if (!isOpen) return null;
+
+  const handleBackdropClick = () => {
+    if (!isLoading) onClose();
+  };
 
   return (
     <>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-        onClick={onClose}
+        onClick={handleBackdropClick}
       />
 
       {/* Modal */}
@@ -18,7 +22,8 @@ export function ResetPasswordModal({ isOpen, onClose, onConfirm }) {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1 hover:bg-brown-100 rounded-full transition-colors"
+            disabled={isLoading}
+            className="absolute top-4 right-4 p-1 hover:bg-brown-100 rounded-full transition-colors disabled:opacity-50"
             aria-label="Close"
           >
             <X className="w-5 h-5 text-brown-600" />
@@ -42,6 +47,7 @@ export function ResetPasswordModal({ isOpen, onClose, onConfirm }) {
                 variant="outline"
                 size="lg"
                 className="flex-1"
+                disabled={isLoading}
               >
                 Cancel
               </Button>
@@ -50,8 +56,9 @@ export function ResetPasswordModal({ isOpen, onClose, onConfirm }) {
                 variant="primary"
                 size="lg"
                 className="flex-1"
+                disabled={isLoading}
               >
-                Reset
+                {isLoading ? "Updating..." : "Reset"}
               </Button>
             </div>
           </div>

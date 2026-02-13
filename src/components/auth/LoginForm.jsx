@@ -1,15 +1,15 @@
 import { Input } from "../ui/input";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { AlertIncorrect, showErrorToast } from "../common/Toast";
+import { AlertIncorrect } from "../common/Toast";
 import { Eye, EyeOff } from "lucide-react";
 import { ErrorMessage } from "./ErrorMessage";
 import { AuthFooter } from "./AuthFooter";
 import { Button } from "../common/Button";
+import { useAuth } from "../../contexts/authentication";
 
-export function LoginForm({ isAdmin = false }) {
-  const navigate = useNavigate();
-  
+export function LoginForm() {
+  const { login, loading, error } = useAuth();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -62,185 +62,30 @@ export function LoginForm({ isAdmin = false }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const checkEmailRegistered = (email) => {
-    // Check if email exists in registeredEmails
-    const registeredEmails = localStorage.getItem("registeredEmails");
-    if (registeredEmails) {
-      try {
-        const emails = JSON.parse(registeredEmails);
-        return emails.includes(email.toLowerCase());
-      } catch (error) {
-        console.error("Error parsing registered emails:", error);
-      }
-    }
-    
-    // Also check if current user has this email
-    const currentUser = localStorage.getItem("user");
-    if (currentUser) {
-      try {
-        const userData = JSON.parse(currentUser);
-        return userData.email?.toLowerCase() === email.toLowerCase();
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    }
-    
-    return false;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      console.log("Form validation failed");
-      return;
-    }
 
-    // Check if admin credentials FIRST (before checking registered emails)
-    const ADMIN_EMAIL = "gunyaluck1@gmail.com";
-    const ADMIN_PASSWORD = "123456";
-    
-    if (formData.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase() && formData.password.trim() === ADMIN_PASSWORD) {
-      console.log("Admin credentials matched!");
-      // Admin login
-      const adminData = {
-        name: "Admin",
-        username: "admin",
-        email: ADMIN_EMAIL,
-        avatar: null,
-        isAdmin: true,
-      };
-      localStorage.setItem("user", JSON.stringify(adminData));
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("isAdmin", "true");
+    if (!validateForm()) return;
 
-      // Debug: ตรวจสอบว่าข้อมูลถูกเก็บไว้หรือไม่
-      console.log("Admin login successful!");
-      console.log("isAdmin:", localStorage.getItem("isAdmin"));
-      console.log("isLoggedIn:", localStorage.getItem("isLoggedIn"));
-      console.log("user:", localStorage.getItem("user"));
-      
-      navigate("/admin-landing-page");
-      return;
-    }
+    const result = await login(
+      formData.email.trim().toLowerCase(),
+      formData.password
+    );
 
-    // Skip admin email from regular user login check
-    if (formData.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase()) {
-      // Admin email but wrong password
+    if (result?.error) {
       if (isMobile) {
-        setErrors({
-          email: "error",
-          password: "error",
-        });
+        setErrors({ email: "error", password: "error" });
       } else {
-        setErrors({
-          email: "error",
-          password: "error",
-        });
+        setErrors({ email: "error", password: "error" });
         setShowAlertIncorrect(true);
       }
-      return;
     }
-
-    // First, check if email is registered in localStorage
-    if (checkEmailRegistered(formData.email)) {
-      // Email is registered, allow login using localStorage
-      const currentUser = localStorage.getItem("user");
-      let userData;
-      
-      if (currentUser) {
-        try {
-          userData = JSON.parse(currentUser);
-          // If stored user email matches, update username from credentials if available
-          if (userData.email?.toLowerCase() === formData.email.toLowerCase()) {
-            // Try to get username from credentials
-            const userCredentials = localStorage.getItem("userCredentials");
-            if (userCredentials) {
-              try {
-                const credentials = JSON.parse(userCredentials);
-                const cred = credentials[formData.email.toLowerCase()];
-                if (cred && cred.username) {
-                  // Update userData with username from credentials
-                  userData.username = cred.username;
-                  if (cred.name) {
-                    userData.name = cred.name;
-                  }
-                  localStorage.setItem("user", JSON.stringify(userData));
-                }
-              } catch (error) {
-                console.error("Error parsing user credentials:", error);
-              }
-            }
-            localStorage.setItem("isLoggedIn", "true");
-            navigate("/member-landing-page");
-            return;
-          }
-        } catch (error) {
-          console.error("Error parsing user data:", error);
-        }
-      }
-      
-      // If no user data or email doesn't match, try to get username from credentials
-      const userCredentials = localStorage.getItem("userCredentials");
-      let username = null;
-      let name = formData.email.split("@")[0];
-      
-      if (userCredentials) {
-        try {
-          const credentials = JSON.parse(userCredentials);
-          const cred = credentials[formData.email.toLowerCase()];
-          if (cred) {
-            username = cred.username;
-            name = cred.name || name;
-          }
-        } catch (error) {
-          console.error("Error parsing user credentials:", error);
-        }
-      }
-      
-      userData = {
-        name: name,
-        username: username,
-        email: formData.email,
-        avatar: null,
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/member-landing-page");
-      return;
-    }
-
-    // If email not found in localStorage, show error
-    // TODO: Add backend API call later
-    if (isMobile) {
-      // Mobile: Show red border on input fields only
-      setErrors({
-        email: "error",
-        password: "error",
-      });
-    } else {
-      // Desktop: Show red border on input fields and AlertIncorrect toast
-      setErrors({
-        email: "error",
-        password: "error",
-      });
-      setShowAlertIncorrect(true);
-    }
-  };
-
-  const handleAdminLogin = () => {
-    navigate("/admin-landing-page");
   };
 
 
   return (
     <div className="w-full flex items-center justify-center px-4 my-15">
       <div className="w-full bg-brown-200 rounded-2xl px-6 py-15 flex flex-col gap-6 lg:w-[798px] lg:h-[540px] lg:px-30 lg:pt-20 lg:pb-0">
-          {/* Admin Panel Label */}
-          {isAdmin && (
-            <p className="text-headline-4-blue-600 text-center">Admin panel</p>
-          )}
-          
           {/* Title */}
           <h1 className="text-headline-2 text-center text-brown-600">Log in</h1>
 
@@ -337,11 +182,17 @@ export function LoginForm({ isAdmin = false }) {
               variant="primary"
               size="md"
               width="141"
-              onClick={isAdmin ? handleAdminLogin : handleSubmit}
+              disabled={loading}
             >
-              Log in
+              {loading ? "Logging in..." : "Log in"}
             </Button>
           </form>
+
+          {error && (
+            <div className="w-full mt-4 text-center">
+              <span className="body-1-brown-400 text-brand-red">{error}</span>
+            </div>
+          )}
 
           <AuthFooter type="login" />
       </div>

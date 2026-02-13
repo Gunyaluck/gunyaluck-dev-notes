@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import { LandingPage } from "./page/LandingPage";
 import { SignUpPage } from "./page/SignUpPage";
@@ -8,8 +8,6 @@ import { SuccessMessage } from "./components/auth/SuccessMessage";
 import { ViewArticlePage } from "./page/ViewArticlePage";
 import { ProfilePage } from "./page/ProfilePage";
 import { ResetPasswordPage } from "./page/ResetPasswordPage";
-import { AdminLandingPage } from "./page/admin/AdminLandingPage";
-import { AdminLoginPage } from "./page/admin/AdminLoginPage";
 import { ArticleManagementPage } from "./page/admin/ArticleManagementPage";
 import { CreateArticlePage } from "./page/admin/CreateArticlePage";
 import { CategoryManagementPage } from "./page/admin/CategoryManagementPage";
@@ -17,21 +15,68 @@ import { CreateCategoryPage } from "./page/admin/CreateCategoryPage";
 import { AdminProfilePage } from "./page/admin/AdminProfilePage";
 import { NotificationPage } from "./page/admin/NotificationPage";
 import { AdminResetPasswordPage } from "./page/admin/AdminResetPasswordPage";
-  
+import { useAuth } from "./contexts/authentication";
+import AuthenticationRoute from "./components/auth/AuthenticationRoute";
+import GuestRoute from "./components/auth/GuestRoute";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+
 function App() {
+  const { isAuthenticated, getUserLoading, userRole } = useAuth();
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/success" element={<SuccessMessage />} />
+        <Route path="/signup" element={
+          <GuestRoute
+            isloading={getUserLoading}
+            isauthenticated={isAuthenticated}
+          >
+            <SignUpPage />
+          </GuestRoute>
+        }
+        />
+        <Route path="/login" element={
+          <GuestRoute
+            isloading={getUserLoading}
+            isauthenticated={isAuthenticated}
+          >
+            <LoginPage />
+          </GuestRoute>
+        }
+        />
+        <Route path="/signup/success" element={
+          <GuestRoute
+            isloading={getUserLoading}
+            isauthenticated={isAuthenticated}
+          >
+            <SuccessMessage />
+          </GuestRoute>
+        }
+        />
         <Route path="/post/:postId" element={<ViewArticlePage />} />
         <Route path="/member-landing-page" element={<LandingPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/admin-landing-page" element={<AdminLandingPage />} />
-        <Route path="/admin-login" element={<AdminLoginPage />} />
+        <Route path="/profile" element={
+          <ProtectedRoute
+            isloading={getUserLoading}
+            isauthenticated={isAuthenticated}
+            userRole={userRole}
+            requiredRole="user"
+          >
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+        />
+        <Route path="/reset-password" element={
+          <ProtectedRoute
+            isloading={getUserLoading}
+            isauthenticated={isAuthenticated}
+            userRole={userRole}
+            requiredRole="user"
+          >
+            <ResetPasswordPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin-landing-page" element={<LandingPage />} />
         <Route path="/admin/article-management" element={<ArticleManagementPage />} />
         <Route path="/admin/create-article" element={<CreateArticlePage />} />
         <Route path="/admin/edit-article/:id" element={<CreateArticlePage />} />
@@ -43,7 +88,7 @@ function App() {
         <Route path="/admin/reset-password" element={<AdminResetPasswordPage />} />
       </Routes>
       <Toaster position="bottom-right" />
-    </BrowserRouter>
+    </>
   );
 }
 
