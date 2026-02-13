@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { Button } from "../../common/Button";
 
-export function DeleteArticleModal({ isOpen, onClose, onConfirm }) {
+export function DeleteArticleModal({ isOpen, onClose, onConfirm, isLoading = false }) {
   if (!isOpen) return null;
 
   return (
@@ -9,7 +9,7 @@ export function DeleteArticleModal({ isOpen, onClose, onConfirm }) {
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-        onClick={onClose}
+        onClick={isLoading ? undefined : onClose}
       />
 
       {/* Modal */}
@@ -17,8 +17,9 @@ export function DeleteArticleModal({ isOpen, onClose, onConfirm }) {
         <div className="bg-white rounded-lg shadow-lg w-full max-w-[476px] pt-14 pr-8 pb-6 pl-8 relative">
           {/* Close Button */}
           <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-1 hover:bg-brown-100 rounded-full transition-colors"
+            onClick={isLoading ? undefined : onClose}
+            disabled={isLoading}
+            className="absolute top-4 right-4 p-1 hover:bg-brown-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Close"
           >
             <X className="w-5 h-5 text-brown-600" />
@@ -42,6 +43,7 @@ export function DeleteArticleModal({ isOpen, onClose, onConfirm }) {
                 variant="outline"
                 size="lg"
                 className="flex-1"
+                disabled={isLoading}
               >
                 Cancel
               </Button>
@@ -50,8 +52,9 @@ export function DeleteArticleModal({ isOpen, onClose, onConfirm }) {
                 variant="primary"
                 size="lg"
                 className="flex-1 bg-brand-red hover:bg-red-600 text-white border-none"
+                disabled={isLoading}
               >
-                Delete
+                {isLoading ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </div>

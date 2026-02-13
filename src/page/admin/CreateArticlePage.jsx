@@ -9,7 +9,7 @@ export function CreateArticlePage() {
 
       {/* Main Content */}
       <div className="flex-1 py-10 px-15">
-        <ArticleForm />
+        <ArticleForm/>
       </div>
     </div>
   );

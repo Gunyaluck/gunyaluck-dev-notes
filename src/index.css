@@ -190,6 +190,13 @@ body {
   color: var(--color-green-500);
 }
 
+.body-3-red-600 {
+  font-size: var(--font-size-body-3);
+  font-weight: var(--font-weight-body);
+  line-height: 1.25rem;
+  color: var(--color-brand-red);
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;

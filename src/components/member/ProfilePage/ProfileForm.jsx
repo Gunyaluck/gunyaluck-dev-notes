@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "sonner";
 import { Input } from "../../ui/input";
-import { User, RotateCcw } from "lucide-react";
+import { User, RotateCcw, Upload } from "lucide-react";
 import { Button } from "../../common/Button";
 import { showSuccessToast } from "../../common/Toast";
 import { useAuth } from "../../../contexts/authentication";
@@ -10,65 +11,176 @@ import { useAuth } from "../../../contexts/authentication";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function ProfileForm() {
-  const { user, fetchUser } = useAuth();
-  const [formData, setFormData] = useState({
-    name: "",
-    username: "",
-    email: "",
-  });
-  const [saving, setSaving] = useState(false);
-  const navigate = useNavigate();
+    const { user, fetchUser } = useAuth();
+    const [formData, setFormData] = useState({
+        name: "",
+        username: "",
+        email: "",
+    });
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name || "",
-        username: user.username || "",
-        email: user.email || "",
-      });
-    }
-  }, [user]);
+    const [profilePictureFile, setProfilePictureFile] = useState(null);
+    const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+    const [saving, setSaving] = useState(false);
+    const [imageError, setImageError] = useState(false);
+    const fileInputRef = useRef(null);
+    const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    setSaving(true);
-    try {
-      await axios.patch(
-        `${API_BASE_URL}/auth/profile`,
-        {
-          name: formData.name.trim(),
-          username: formData.username.trim(),
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || "",
+                username: user.username || "",
+                email: user.email || "",
+            });
+            const imageUrl = user.profilePic || user.avatar || user.profile_pic;
+            setProfilePicturePreview(imageUrl || null);
+        } else {
+            // Reset form when user is null
+            setFormData({
+                name: "",
+                username: "",
+                email: "",
+                bio: "",
+            });
+            setProfilePicturePreview(null);
         }
-      );
-      await fetchUser();
-      showSuccessToast("Saved profile", "Your profile has been successfully updated", true);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      showSuccessToast(
-        "Error",
-        error.response?.data?.error || "Failed to update profile",
-        false
-      );
-    } finally {
-      setSaving(false);
-    }
-  };
+    }, [user]);
 
-    const handleUploadPicture = () => {
-        // Handle profile picture upload
-        // This is a placeholder - you can implement file upload logic here
-        console.log("Upload profile picture");
+    const handleProfilePictureChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                toast.error("Please select an image file");
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                toast.error("Image size must be less than 5MB");
+                return;
+            }
+
+            // Store the file for upload
+            setProfilePictureFile(file);
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePicturePreview(reader.result);
+            };
+            reader.onerror = () => {
+                toast.error("Failed to read image file");
+            };
+            reader.readAsDataURL(file);
+        }
     };
+
+    const handleUploadButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast.error("Authentication required. Please login again.");
+            return;
+        }
+
+        setSaving(true);
+        try {
+            // อัพโหลดรูปภาพก่อน (ถ้ามี)
+            if (profilePictureFile) {
+                try {
+                    const imageFormData = new FormData();
+                    imageFormData.append("profilePicture", profilePictureFile);
+                    
+                    // ใช้ endpoint สำหรับอัพโหลด profile picture
+                    await axios.patch(
+                        `${API_BASE_URL}/auth/profile-picture`,
+                        imageFormData,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                "Content-Type": "multipart/form-data",
+                            },
+                        }
+                    );
+                    
+                    console.log("Successfully uploaded profile picture");
+                } catch (uploadError) {
+                    console.error("Error uploading profile picture:", uploadError);
+                    console.error("Upload error response:", uploadError.response?.data);
+                    
+                    // ถ้าไม่สามารถอัพโหลดรูปภาพได้ ให้แสดง error และหยุดการทำงาน
+                    toast.error(
+                        uploadError.response?.data?.message || 
+                        uploadError.response?.data?.error || 
+                        "Failed to upload profile picture",
+                        {
+                            description: "Please try again or update profile without image.",
+                            duration: 5000,
+                        }
+                    );
+                    
+                    // Reset file state since upload failed
+                    setProfilePictureFile(null);
+                    const imageUrl = user?.profilePic || user?.avatar || user?.profile_pic;
+                    setProfilePicturePreview(imageUrl || null);
+                    
+                    setSaving(false);
+                    return; // Stop execution if image upload fails
+                }
+            }
+            
+            // อัพเดตข้อมูล profile (แยกจากการอัพโหลดรูปภาพ)
+            await axios.patch(
+                `${API_BASE_URL}/auth/profile`,
+                {
+                    name: formData.name.trim(),
+                    username: formData.username.trim(),
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            
+            // Reset file state after successful save
+            setProfilePictureFile(null);
+            
+            await fetchUser();
+            showSuccessToast("Saved profile", "Your profile has been successfully updated", true);
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            console.error("Error response:", error.response?.data);
+            
+            // Handle authentication errors
+            if (error.response?.status === 401) {
+                toast.error("Authentication required. Please login again.");
+                localStorage.removeItem("token");
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 2000);
+                setSaving(false);
+                return;
+            }
+            
+            showSuccessToast(
+                "Error",
+                error.response?.data?.error || error.response?.data?.message || "Failed to update profile",
+                false
+            );
+        } finally {
+            setSaving(false);
+        }
+    };
+
 
     return (
         <div className="w-full min-h-screen bg-brown-100">
@@ -172,23 +284,38 @@ export function ProfileForm() {
                                     {/* Profile Picture Section - Desktop: Horizontal Layout */}
                                     <div className="flex flex-col items-center gap-4 lg:flex-row lg:items-start lg:gap-6">
                                         <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full bg-brown-300 flex items-center justify-center overflow-hidden shrink-0">
-                                            {user?.avatar ? (
+                                            {profilePicturePreview && !imageError ? (
                                                 <img
-                                                    src={user.avatar}
-                                                    alt={user.name || "User"}
+                                                    src={profilePicturePreview}
+                                                    alt={user?.name || "User"}
                                                     className="w-full h-full object-cover"
+                                                    onError={() => {
+                                                        console.error("Failed to load profile image:", profilePicturePreview);
+                                                        setImageError(true);
+                                                    }}
+                                                    onLoad={() => setImageError(false)}
                                                 />
                                             ) : (
                                                 <User className="w-16 h-16 lg:w-20 lg:h-20 text-brown-600" />
                                             )}
                                         </div>
-                                        <Button
-                                            onClick={handleUploadPicture}
-                                            variant="upload"
-                                            className="lg:mt-4"
-                                        >
-                                            Upload profile picture
-                                        </Button>
+                                        <div className="flex flex-col items-center lg:items-start">
+                                            <input
+                                                ref={fileInputRef}
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleProfilePictureChange}
+                                                className="hidden"
+                                            />
+                                            <Button
+                                                onClick={handleUploadButtonClick}
+                                                variant="upload"
+                                                className="lg:mt-4"
+                                            >
+                                                <Upload className="w-5 h-5 mr-2" />
+                                                Upload profile picture
+                                            </Button>
+                                        </div>
                                     </div>
 
                                     {/* Form Fields */}
@@ -265,22 +392,37 @@ export function ProfileForm() {
                             {/* Profile Picture */}
                             <div className="flex flex-col items-center gap-4">
                                 <div className="w-32 h-32 rounded-full bg-brown-300 flex items-center justify-center overflow-hidden shrink-0">
-                                    {user?.avatar ? (
+                                    {profilePicturePreview && !imageError ? (
                                         <img
-                                            src={user.avatar}
-                                            alt={user.name || "User"}
+                                            src={profilePicturePreview}
+                                            alt={user?.name || "User"}
                                             className="w-full h-full object-cover"
+                                            onError={() => {
+                                                console.error("Failed to load profile image:", profilePicturePreview);
+                                                setImageError(true);
+                                            }}
+                                            onLoad={() => setImageError(false)}
                                         />
                                     ) : (
                                         <User className="w-16 h-16 text-brown-600" />
                                     )}
                                 </div>
-                                <Button
-                                    onClick={handleUploadPicture}
-                                    variant="upload"
-                                >
-                                    Upload profile picture
-                                </Button>
+                                <div className="flex flex-col items-center">
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleProfilePictureChange}
+                                        className="hidden"
+                                    />
+                                    <Button
+                                        onClick={handleUploadButtonClick}
+                                        variant="upload"
+                                    >
+                                        <Upload className="w-5 h-5 mr-2" />
+                                        Upload profile picture
+                                    </Button>
+                                </div>
                             </div>
 
                             {/* Form Fields */}

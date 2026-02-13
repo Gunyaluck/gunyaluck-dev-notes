@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
@@ -6,18 +6,14 @@ import { toast } from "sonner";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/ui/input";
 import { DeleteCategoryModal } from "../../components/admin/CategoryManagement/DeleteCategoryModal.jsx";
+import axios from "axios";
 
-// Mock categories data
-const mockCategories = [
-  { id: 1, name: "Cat" },
-  { id: 2, name: "General" },
-  { id: 3, name: "Inspiration" },
-  { id: 4, name: "Highlight" },
-];
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function CategoryManagementPage() {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState(mockCategories);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
@@ -26,16 +22,51 @@ export function CategoryManagementPage() {
     return category.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/categories`);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories");
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const handleDeleteClick = (category) => {
     setCategoryToDelete(category);
     setShowDeleteModal(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Authentication required. Please login again.");
+      return;
+    }
+    try {
+      await axios.delete(`${API_BASE_URL}/categories/${categoryToDelete.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category");
+      return;
+    }
     if (categoryToDelete) {
       console.log("Delete category:", categoryToDelete.id);
-      // TODO: Implement delete functionality
-      
+      setCategories((prevCategories) => 
+        prevCategories.filter((category) => category.id !== categoryToDelete.id)
+      );
+    }
+
       toast.success("Category deleted", {
         description: "The category has been successfully deleted",
         duration: 5000,
@@ -62,7 +93,6 @@ export function CategoryManagementPage() {
 
       setShowDeleteModal(false);
       setCategoryToDelete(null);
-    }
   };
 
   const handleDeleteCancel = () => {

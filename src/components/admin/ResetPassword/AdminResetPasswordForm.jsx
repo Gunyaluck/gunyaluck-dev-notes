@@ -1,12 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
 import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export function AdminResetPasswordForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -16,81 +27,106 @@ export function AdminResetPasswordForm() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
+    const newErrors = {};
+
     if (!formData.currentPassword.trim()) {
-      toast.error("Current password is required", { duration: 3000 });
-      return false;
+      newErrors.currentPassword = "Current password is required";
     }
 
     if (!formData.newPassword.trim()) {
-      toast.error("New password is required", { duration: 3000 });
-      return false;
+      newErrors.newPassword = "New password is required";
     } else if (formData.newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters", { duration: 3000 });
-      return false;
+      newErrors.newPassword = "Password must be at least 6 characters";
     }
 
     if (!formData.confirmPassword.trim()) {
-      toast.error("Please confirm your new password", { duration: 3000 });
-      return false;
+      newErrors.confirmPassword = "Please confirm your new password";
     } else if (formData.newPassword !== formData.confirmPassword) {
-      toast.error("Passwords do not match", { duration: 3000 });
-      return false;
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
-    return true;
+    setErrors(newErrors);
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      errors: newErrors
+    };
   };
 
-  const handleSave = () => {
-    if (!validateForm()) {
+  const handleSave = (e) => {
+    e.preventDefault();
+    const { isValid, errors: validationErrors } = validateForm();
+    if (isValid) {
+      setShowModal(true);
+    } else {
+      // Show error toast if validation fails
+      const errorMessages = Object.values(validationErrors).filter(msg => msg);
+      if (errorMessages.length > 0) {
+        toast.error("Validation Error", {
+          description: errorMessages[0],
+          duration: 5000,
+        });
+      }
+    }
+  };
+
+  const handleConfirmReset = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowModal(false);
       return;
     }
 
-    // Show modal for confirmation
-    setShowModal(true);
+    setSubmitting(true);
+    try {
+      await axios.put(
+        `${API_BASE_URL}/auth/reset-password`,
+        {
+          oldPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setShowModal(false);
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      toast.success("Password updated", {
+        description: "Your password has been changed successfully",
+        duration: 5000,
+      });
+      navigate("/admin/reset-password");
+    } catch (error) {
+      console.error("Error updating password:", error);
+      const message = error.response?.data?.error || error.response?.data?.message || "Failed to update password";
+      toast.error("Error", {
+        description: message,
+        duration: 5000,
+      });
+      setErrors((prev) => ({ ...prev, currentPassword: message }));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleConfirmReset = () => {
-    console.log("Reset password:", formData);
-    // TODO: Implement reset password functionality
-    
-    toast.success("Password reset", {
-      description: "Your password has been successfully reset",
-      duration: 5000,
-      style: {
-        background: "var(--color-brand-green)",
-        color: "white",
-        borderRadius: "8px",
-        border: "none",
-        width: "700px",
-        maxWidth: "700px",
-      },
-      classNames: {
-        toast: "draft-success-toast",
-        title: "text-headline-4 font-semibold text-white",
-        description: "body-2 text-white",
-        closeButton: "text-white hover:text-brown-100",
-      },
-    });
-
-    // Reset form
-    setFormData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-
-    setShowModal(false);
-  };
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    if (!submitting) setShowModal(false);
   };
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -116,10 +152,13 @@ export function AdminResetPasswordForm() {
             <div className="relative">
               <Input
                 type={showCurrentPassword ? "text" : "password"}
+                name="currentPassword"
                 placeholder="Current password"
                 value={formData.currentPassword}
-                onChange={(e) => handleInputChange("currentPassword", e.target.value)}
-                className="w-[480px] h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                onChange={handleInputChange}
+                className={`w-[480px] h-12 px-4 pr-12 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300 ${
+                  errors.currentPassword ? "border-brand-red" : "border-brown-300"
+                }`}
               />
               <button
                 type="button"
@@ -134,6 +173,9 @@ export function AdminResetPasswordForm() {
                 )}
               </button>
             </div>
+            {errors.currentPassword && (
+              <span className="body-3-red-600">{errors.currentPassword}</span>
+            )}
           </div>
 
           {/* New Password */}
@@ -142,10 +184,13 @@ export function AdminResetPasswordForm() {
             <div className="relative">
               <Input
                 type={showNewPassword ? "text" : "password"}
+                name="newPassword"
                 placeholder="New password"
                 value={formData.newPassword}
-                onChange={(e) => handleInputChange("newPassword", e.target.value)}
-                className="w-[480px] h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                onChange={handleInputChange}
+                className={`w-[480px] h-12 px-4 pr-12 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300 ${
+                  errors.newPassword ? "border-brand-red" : "border-brown-300"
+                }`}
               />
               <button
                 type="button"
@@ -160,6 +205,9 @@ export function AdminResetPasswordForm() {
                 )}
               </button>
             </div>
+            {errors.newPassword && (
+              <span className="body-3-red-600">{errors.newPassword}</span>
+            )}
           </div>
 
           {/* Confirm New Password */}
@@ -168,10 +216,13 @@ export function AdminResetPasswordForm() {
             <div className="relative">
               <Input
                 type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
                 placeholder="Confirm new password"
                 value={formData.confirmPassword}
-                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                className="w-[480px] h-12 px-4 pr-12 rounded-lg border border-brown-300 bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300"
+                onChange={handleInputChange}
+                className={`w-[480px] h-12 px-4 pr-12 rounded-lg border bg-white body-1-brown-600 placeholder-brown-400 focus:ring-2 focus:ring-brand-green focus:border-brand-green transition-all duration-300 ${
+                  errors.confirmPassword ? "border-brand-red" : "border-brown-300"
+                }`}
               />
               <button
                 type="button"
@@ -186,6 +237,9 @@ export function AdminResetPasswordForm() {
                 )}
               </button>
             </div>
+            {errors.confirmPassword && (
+              <span className="body-3-red-600">{errors.confirmPassword}</span>
+            )}
           </div>
         </div>
       </div>
@@ -195,6 +249,7 @@ export function AdminResetPasswordForm() {
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmReset}
+        isLoading={submitting}
       />
     </div>
   );

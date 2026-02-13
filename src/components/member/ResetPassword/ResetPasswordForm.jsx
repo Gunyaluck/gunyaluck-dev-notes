@@ -178,7 +178,7 @@ export function ResetPasswordForm() {
                             <span className="text-headline-4-brown-400">
                                 {(() => {
                                     const name = user?.name || "User";
-                                    return name.length > 6 ? name.substring(0, 6) + "..." : name;
+                                    return name;
                                 })()}
                             </span>
                             <span className="text-brown-400">|</span>
