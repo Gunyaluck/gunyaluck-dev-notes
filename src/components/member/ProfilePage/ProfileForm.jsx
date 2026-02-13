@@ -1,72 +1,68 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Input } from "../../ui/input";
-import { User, RotateCcw, Upload } from "lucide-react";
+import { User, RotateCcw } from "lucide-react";
 import { Button } from "../../common/Button";
 import { showSuccessToast } from "../../common/Toast";
+import { useAuth } from "../../../contexts/authentication";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function ProfileForm() {
-    const [user, setUser] = useState(null);
-    const [formData, setFormData] = useState({
-        name: "",
-        username: "",
-        email: "",
-    });
-    const navigate = useNavigate();
+  const { user, fetchUser } = useAuth();
+  const [formData, setFormData] = useState({
+    name: "",
+    username: "",
+    email: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        // Load user data from localStorage
-        const userData = localStorage.getItem("user");
-        if (userData) {
-            try {
-                const parsedUser = JSON.parse(userData);
-                setUser(parsedUser);
-                setFormData({
-                    name: parsedUser.name || "",
-                    username: parsedUser.username || "",
-                    email: parsedUser.email || "",
-                });
-            } catch (error) {
-                console.error("Error parsing user data:", error);
-            }
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        username: user.username || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    setSaving(true);
+    try {
+      await axios.patch(
+        `${API_BASE_URL}/auth/profile`,
+        {
+          name: formData.name.trim(),
+          username: formData.username.trim(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-    }, []);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSave = () => {
-        // Update user data in localStorage
-        const updatedUser = {
-            ...user,
-            ...formData,
-        };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-
-        // Also update userCredentials if email changed
-        if (user?.email && user.email !== formData.email) {
-            const userCredentials = localStorage.getItem("userCredentials");
-            if (userCredentials) {
-                try {
-                    const credentials = JSON.parse(userCredentials);
-                    if (credentials[user.email.toLowerCase()]) {
-                        credentials[formData.email.toLowerCase()] = credentials[user.email.toLowerCase()];
-                        delete credentials[user.email.toLowerCase()];
-                        localStorage.setItem("userCredentials", JSON.stringify(credentials));
-                    }
-                } catch (error) {
-                    console.error("Error updating credentials:", error);
-                }
-            }
-        }
-
-        setUser(updatedUser);
-
-        // Show success toast with green background and white text
-        showSuccessToast("Saved profile", "Your profile has been successfully updated", true);
-    };
+      );
+      await fetchUser();
+      showSuccessToast("Saved profile", "Your profile has been successfully updated", true);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      showSuccessToast(
+        "Error",
+        error.response?.data?.error || "Failed to update profile",
+        false
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
 
     const handleUploadPicture = () => {
         // Handle profile picture upload
@@ -251,8 +247,9 @@ export function ProfileForm() {
                                             variant="primary"
                                             width="120"
                                             className="lg:w-auto px-8"
+                                            disabled={saving}
                                         >
-                                            Save
+                                            {saving ? "Saving..." : "Save"}
                                         </Button>
                                     </div>
                                 </div>
@@ -342,8 +339,9 @@ export function ProfileForm() {
                                     variant="primary"
                                     width="120"
                                     className="px-8"
+                                    disabled={saving}
                                 >
-                                    Save
+                                    {saving ? "Saving..." : "Save"}
                                 </Button>
                             </div>
                         </div>

@@ -11,7 +11,7 @@ export function Footer() {
           <div className="flex items-center gap-3">
             {/* LinkedIn Icon*/}
             <a
-              href="#"
+              href="https://www.linkedin.com/in/gunyaluck-surabandidtip-b822133a6/"
               className="w-6 h-6 rounded-full bg-brown-500 flex items-center justify-center hover:bg-brown-500 transition-colors"
               aria-label="LinkedIn"
             >

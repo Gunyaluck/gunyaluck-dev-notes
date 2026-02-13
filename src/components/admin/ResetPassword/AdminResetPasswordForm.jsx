@@ -3,7 +3,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
-import { ResetPasswordModal } from "../../common/ResetPasswordModal";
+import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
 
 export function AdminResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -191,7 +191,7 @@ export function AdminResetPasswordForm() {
       </div>
 
       {/* Reset Password Modal */}
-      <ResetPasswordModal
+      <ResetPasswordConfirm
         isOpen={showModal}
         onClose={handleCloseModal}
         onConfirm={handleConfirmReset}

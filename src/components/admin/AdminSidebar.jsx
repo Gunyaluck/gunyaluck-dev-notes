@@ -2,10 +2,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FileText, Folder, User, Bell, Lock, ExternalLink, LogOut } from "lucide-react";
 import { Button } from "../common/Button";
 import logo from "../../assets/logo/logo.svg";
+import { useAuth } from "../../contexts/authentication";
 
 export function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const menuItems = [
     { id: "article", label: "Article management", icon: FileText, path: "/admin/article-management" },
@@ -16,14 +18,12 @@ export function AdminSidebar() {
   ];
 
   const bottomItems = [
-    { id: "website", label: "hh. website", icon: ExternalLink, path: "/admin-landing-page" },
-    { id: "logout", label: "Log out", icon: LogOut, path: "/admin-login" },
+    { id: "website", label: "hh. website", icon: ExternalLink, path: "/" },
+    { id: "logout", label: "Log out", icon: LogOut, path: "/login" },
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
-    navigate("/admin-login");
+    logout();
   };
 
   const isActive = (path) => {
