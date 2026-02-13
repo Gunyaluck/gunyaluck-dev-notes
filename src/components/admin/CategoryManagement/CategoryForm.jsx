@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import axios from "axios";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function CategoryForm() {
   const navigate = useNavigate();
@@ -11,23 +14,36 @@ export function CategoryForm() {
 
   const [categoryName, setCategoryName] = useState("");
   const [isLoading, setIsLoading] = useState(isEditMode);
+  const [saving, setSaving] = useState(false);
 
   // Fetch category data if in edit mode
   useEffect(() => {
     if (isEditMode && id) {
-      // TODO: Fetch category data from API
-      // For now, use mock data
-      setIsLoading(true);
-      setTimeout(() => {
-        // Mock category data
-        const mockCategory = { id: parseInt(id), name: "Cat" };
-        setCategoryName(mockCategory.name);
-        setIsLoading(false);
-      }, 500);
-    }
-  }, [id, isEditMode]);
+      const fetchCategory = async () => {
+        try {
+          setIsLoading(true);
+          const response = await axios.get(`${API_BASE_URL}/categories`);
+          const category = response.data.find((cat) => cat.id === parseInt(id));
+          if (category) {
+            setCategoryName(category.name);
+          } else {
+            toast.error("Category not found");
+            navigate("/admin/category-management");
+          }
+        } catch (error) {
+          console.error("Error fetching category:", error);
+          toast.error("Failed to load category");
+          navigate("/admin/category-management");
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
-  const handleSave = () => {
+      fetchCategory();
+    }
+  }, [id, isEditMode, navigate]);
+
+  const handleSave = async () => {
     if (!categoryName.trim()) {
       toast.error("Category name is required", {
         description: "Please enter a category name",
@@ -36,34 +52,89 @@ export function CategoryForm() {
       return;
     }
 
-    console.log("Save category:", { id, name: categoryName });
-    // TODO: Implement save functionality
-    
-    const title = isEditMode ? "Category updated" : "Category created";
-    const description = isEditMode
-      ? "The category has been successfully updated"
-      : "The category has been successfully created";
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Authentication required. Please login again.");
+      return;
+    }
 
-    toast.success(title, {
-      description: description,
-      duration: 5000,
-      style: {
-        background: "var(--color-brand-green)",
-        color: "white",
-        borderRadius: "8px",
-        border: "none",
-        width: "700px",
-        maxWidth: "700px",
-      },
-      classNames: {
-        toast: "draft-success-toast",
-        title: "text-headline-4 font-semibold text-white",
-        description: "body-2 text-white",
-        closeButton: "text-white hover:text-brown-100",
-      },
-    });
+    setSaving(true);
+    try {
+      if (isEditMode) {
+        await axios.put(
+          `${API_BASE_URL}/categories/${id}`,
+          { name: categoryName.trim() },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        toast.success("Category updated", {
+          description: "The category has been successfully updated",
+          duration: 5000,
+          style: {
+            background: "var(--color-brand-green)",
+            color: "white",
+            borderRadius: "8px",
+            border: "none",
+            width: "700px",
+            maxWidth: "700px",
+          },
+          classNames: {
+            toast: "draft-success-toast",
+            title: "text-headline-4 font-semibold text-white",
+            description: "body-2 text-white",
+            closeButton: "text-white hover:text-brown-100",
+          },
+        });
+        navigate("/admin/category-management");
+        setSaving(false);
+        return;
+      } else {
+        // Create new category
+        await axios.post(
+          `${API_BASE_URL}/categories`,
+          { name: categoryName.trim() },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-    navigate("/admin/category-management");
+        toast.success("Category created", {
+          description: "The category has been successfully created",
+          duration: 5000,
+          style: {
+            background: "var(--color-brand-green)",
+            color: "white",
+            borderRadius: "8px",
+            border: "none",
+            width: "700px",
+            maxWidth: "700px",
+          },
+          classNames: {
+            toast: "draft-success-toast",
+            title: "text-headline-4 font-semibold text-white",
+            description: "body-2 text-white",
+            closeButton: "text-white hover:text-brown-100",
+          },
+        });
+
+        navigate("/admin/category-management");
+      }
+    } catch (error) {
+      console.error("Error saving category:", error);
+      
+      if (error.response?.status === 401) {
+        toast.error("Authentication required. Please login again.");
+        localStorage.removeItem("token");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        toast.error(error.response?.data?.message || "Failed to save category");
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (isLoading) {
@@ -91,9 +162,10 @@ export function CategoryForm() {
           variant="primary"
           size="md"
           onClick={handleSave}
+          disabled={saving}
           className="shadow-md hover:shadow-lg transition-shadow duration-300"
         >
-          Save
+          {saving ? "Saving..." : "Save"}
         </Button>
       </div>
 

@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { DeleteArticleModal } from "../../components/admin/ArticleManagement/DeleteArticleModal.jsx";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export function ArticleManagementPage() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
@@ -20,6 +22,11 @@ export function ArticleManagementPage() {
   const articlesPerPage = 6;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [articleToDelete, setArticleToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [statuses, setStatuses] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [statusesLoading, setStatusesLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   // Helper function to get SelectItem className
   const getSelectItemClassName = (value, currentValue) => {
@@ -28,11 +35,49 @@ export function ArticleManagementPage() {
     return `${baseClass} ${selectedClass}`;
   };
 
+  // Fetch statuses from backend
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      try {
+        setStatusesLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/statuses`);
+        setStatuses(response.data);
+      } catch (error) {
+        console.error("Error fetching statuses:", error);
+        toast.error("Failed to load statuses");
+        setStatuses([]);
+      } finally {
+        setStatusesLoading(false);
+      }
+    };
+
+    fetchStatuses();
+  }, []);
+
+  // Fetch categories from backend
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/categories`);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories");
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("https://blog-post-project-api.vercel.app/posts", {
+        const response = await axios.get(`${API_BASE_URL}/posts`, {
           params: {
             page: 1,
             limit: 100, // Get more articles for management page
@@ -44,12 +89,24 @@ export function ArticleManagementPage() {
           id: article.id,
           title: article.title,
           category: article.category,
-          status: article.status || "Published", // Default to Published if status doesn't exist
+          status: article.status || "", // Use status from API
+          created_at: article.created_at || article.createdAt || article.dateCreated || null,
         }));
         
-        setArticles(mappedArticles);
+        // เรียงบทความจากสร้างล่าสุดไปสร้างนานสุด (newest first)
+        const sortedArticles = mappedArticles.sort((a, b) => {
+          // ถ้ามี created_at ให้เรียงตามวันที่
+          if (a.created_at && b.created_at) {
+            return new Date(b.created_at) - new Date(a.created_at);
+          }
+          // ถ้าไม่มี created_at ให้เรียงตาม id (id มากกว่า = สร้างใหม่กว่า)
+          return b.id - a.id;
+        });
+        
+        setArticles(sortedArticles);
       } catch (error) {
         console.error("Error fetching articles:", error);
+        toast.error("Failed to load articles");
       } finally {
         setIsLoading(false);
       }
@@ -85,11 +142,23 @@ export function ArticleManagementPage() {
     setShowDeleteModal(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (articleToDelete) {
-      console.log("Delete article:", articleToDelete.id);
-      // TODO: Implement delete functionality
-      
+  const handleDeleteConfirm = async () => {
+    if (!articleToDelete) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Authentication required. Please login again.");
+      setShowDeleteModal(false);
+      setArticleToDelete(null);
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await axios.delete(`${API_BASE_URL}/posts/${articleToDelete.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       toast.success("Article deleted", {
         description: "The article has been successfully deleted",
         duration: 5000,
@@ -114,6 +183,22 @@ export function ArticleManagementPage() {
         prevArticles.filter((article) => article.id !== articleToDelete.id)
       );
 
+      setShowDeleteModal(false);
+      setArticleToDelete(null);
+    } catch (error) {
+      console.error("Error deleting article:", error);
+      
+      if (error.response?.status === 401) {
+        toast.error("Authentication required. Please login again.");
+        localStorage.removeItem("token");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        toast.error(error.response?.data?.message || "Failed to delete article");
+      }
+    } finally {
+      setDeleting(false);
       setShowDeleteModal(false);
       setArticleToDelete(null);
     }
@@ -160,24 +245,37 @@ export function ArticleManagementPage() {
             
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
               <SelectTrigger className="w-[200px] h-12 rounded-lg border-2 border-brown-300 bg-white body-1-brown-600 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green active:scale-[0.98]">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={statusesLoading ? "Loading..." : "Status"} />
               </SelectTrigger>
               <SelectContent position="popper" className="bg-white rounded-lg shadow-lg border border-brown-200 mt-2 p-2">
                 <SelectItem value="all" className={getSelectItemClassName("all", statusFilter)}>All Status</SelectItem>
-                <SelectItem value="Published" className={getSelectItemClassName("Published", statusFilter)}>Published</SelectItem>
-                <SelectItem value="Draft" className={getSelectItemClassName("Draft", statusFilter)}>Draft</SelectItem>
+                {statuses.map((status) => (
+                  <SelectItem 
+                    key={status.id} 
+                    value={status.status} 
+                    className={getSelectItemClassName(status.status, statusFilter)}
+                  >
+                    {status.status}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
             <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value)}>
               <SelectTrigger className="w-[200px] h-12 rounded-lg border-2 border-brown-300 bg-white body-1-brown-600 cursor-pointer transition-all duration-300 hover:shadow-md focus:border-brand-green active:scale-[0.98]">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={categoriesLoading ? "Loading..." : "Category"} />
               </SelectTrigger>
               <SelectContent position="popper" className="bg-white rounded-lg shadow-lg border border-brown-200 mt-2 p-2">
                 <SelectItem value="all" className={getSelectItemClassName("all", categoryFilter)}>All Category</SelectItem>
-                <SelectItem value="Cat" className={getSelectItemClassName("Cat", categoryFilter)}>Cat</SelectItem>
-                <SelectItem value="General" className={getSelectItemClassName("General", categoryFilter)}>General</SelectItem>
-                <SelectItem value="Inspiration" className={getSelectItemClassName("Inspiration", categoryFilter)}>Inspiration</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem 
+                    key={category.id} 
+                    value={category.name} 
+                    className={getSelectItemClassName(category.name, categoryFilter)}
+                  >
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -221,8 +319,15 @@ export function ArticleManagementPage() {
                         </td>
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-brand-green shadow-sm"></div>
-                            <span className="body-1-brown-600">{article.status}</span>
+                            <div 
+                              style={{ 
+                                backgroundColor: article.status?.toLowerCase() === "published" || article.status?.toLowerCase() === "publish" 
+                                  ? "#12b279" 
+                                  : "#eb5164" 
+                              }} 
+                              className="w-2.5 h-2.5 rounded-full shadow-sm"
+                            ></div>
+                            <span className="body-1-brown-600">{article.status || "Unknown"}</span>
                           </div>
                         </td>
                         <td className="px-6 py-5">
@@ -281,6 +386,7 @@ export function ArticleManagementPage() {
             isOpen={showDeleteModal}
             onClose={handleDeleteCancel}
             onConfirm={handleDeleteConfirm}
+            isLoading={deleting}
           />
       </div>
     </div>
