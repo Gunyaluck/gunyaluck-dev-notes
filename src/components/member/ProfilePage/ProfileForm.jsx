@@ -310,7 +310,7 @@ export function ProfileForm() {
                                             <Button
                                                 onClick={handleUploadButtonClick}
                                                 variant="upload"
-                                                className="lg:mt-4"
+                                                className="lg:mt-15 flex flex-row items-center"
                                             >
                                                 <Upload className="w-5 h-5 mr-2" />
                                                 Upload profile picture
