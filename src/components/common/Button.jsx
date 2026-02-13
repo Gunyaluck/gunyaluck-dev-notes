@@ -1,17 +1,5 @@
 import { forwardRef } from "react";
 
-/**
- * Button component that supports multiple variants and styles
- * @param {string} variant - Button variant: "primary" | "secondary" | "outline" | "text" | "icon" | "menu" | "upload" | "close" | "close-dark"
- * @param {string} size - Button size: "sm" | "md" | "lg" | "full" | "icon" | "icon-lg" | "auto"
- * @param {React.ReactNode} children - Button content
- * @param {string} className - Additional CSS classes
- * @param {boolean} disabled - Disabled state
- * @param {function} onClick - Click handler
- * @param {string} type - Button type: "button" | "submit" | "reset"
- * @param {string|number} width - Custom width (e.g., "121", "141", "full")
- * @param {object} ...props - Other button props
- */
 export const Button = forwardRef(({
   variant = "primary",
   size = "md",
@@ -35,7 +23,7 @@ export const Button = forwardRef(({
     icon: "flex items-center justify-center rounded-full bg-white border border-brown-300 hover:bg-brown-100",
     "icon-notification": "flex items-center justify-center rounded-full bg-white border border-brown-300 hover:bg-brown-100",
     menu: "w-full flex items-center gap-3 px-4 py-3 hover:bg-brown-300 text-left body-1-brown-600",
-    upload: "px-6 py-2 bg-white border border-brown-300 rounded-full body-1-brown-600 hover:bg-brown-100",
+    upload: "w-full px-6 py-2 bg-white border border-brown-300 rounded-full body-1-brown-600 hover:bg-brown-100",
     close: "p-1 hover:bg-white/20 rounded-full shrink-0",
     "close-dark": "p-2 hover:bg-brown-100 rounded-full",
     hamburger: "w-[18px] h-[12px] flex flex-col items-center justify-between cursor-pointer bg-transparent border-none p-0",
