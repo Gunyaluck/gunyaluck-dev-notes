@@ -364,20 +364,52 @@ export function ArticleManagementPage() {
 
           {/* Pagination */}
           {!isLoading && filteredArticles.length > 0 && totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-8">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`w-10 h-10 rounded-lg body-1-brown-600 transition-all duration-300 shadow-sm ${
-                    currentPage === page
-                      ? "bg-brown-200 text-white shadow-md scale-105"
-                      : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md hover:scale-105"
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+            <div className="flex justify-center items-center gap-4 mt-8 body-1-brown-600">
+              {/* Prev */}
+              <button
+                type="button"
+                onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded-full border border-brown-300 transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${
+                  currentPage === 1
+                    ? "bg-brown-100 text-brown-400"
+                    : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md"
+                }`}
+              >
+                &lt; Prev
+              </button>
+
+              {/* Page numbers */}
+              <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => handlePageChange(page)}
+                    className={`min-w-[32px] h-8 rounded-full px-2 text-center transition-all duration-300 ${
+                      currentPage === page
+                        ? "bg-brown-500 text-white shadow-md"
+                        : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              {/* Next */}
+              <button
+                type="button"
+                onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-full border border-brown-300 transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${
+                  currentPage === totalPages
+                    ? "bg-brown-100 text-brown-400"
+                    : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md"
+                }`}
+              >
+                Next &gt;
+              </button>
             </div>
           )}
 

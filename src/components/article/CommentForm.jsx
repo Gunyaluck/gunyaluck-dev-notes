@@ -41,7 +41,7 @@ export function CommentForm({ id, isLoggedIn, parentId, onCommentAdded }) {
         try {
             const body = {
                 post_id: Number(id),
-                user_id: Number(userId),
+                user_id: userId,
                 comment_text: text,
                 parent_id: parentId != null ? Number(parentId) : null,
                 title: "Comment",

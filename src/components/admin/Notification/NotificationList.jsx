@@ -48,6 +48,8 @@ export function NotificationList() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const notificationsPerPage = 10;
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -89,17 +91,34 @@ export function NotificationList() {
     }
   };
 
-  const displayList = notifications.map((n) => ({
-    id: n.id,
-    author: n.actor_name ?? n.actorName ?? "Someone",
-    authorAvatar: n.actor_avatar ?? n.actorAvatar ?? null,
-    message: getMessageFromType(n.type),
-    timestamp: n.created_at ?? n.timestamp,
-    type: n.type,
-    post_id: n.post_id,
-    comment_text: n.comment_text ?? n.commentText ?? null,
-    is_read: n.is_read,
-  }));
+  const displayList = notifications
+    .map((n) => ({
+      id: n.id,
+      author: n.actor_name ?? n.actorName ?? "Someone",
+      authorAvatar: n.actor_avatar ?? n.actorAvatar ?? null,
+      message: getMessageFromType(n.type),
+      timestamp: n.created_at ?? n.timestamp,
+      type: n.type,
+      post_id: n.post_id,
+      comment_text: n.comment_text ?? n.commentText ?? null,
+      is_read: n.is_read,
+    }))
+    // เรียงล่าสุดอยู่บนสุดก่อนค่อยแบ่งหน้า
+    .sort((a, b) => {
+      const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return tb - ta;
+    });
+
+  const totalPages = Math.ceil(displayList.length / notificationsPerPage);
+  const startIndex = (currentPage - 1) * notificationsPerPage;
+  const endIndex = startIndex + notificationsPerPage;
+  const paginatedList = displayList.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
 
   if (loading) {
     return (
@@ -127,11 +146,11 @@ export function NotificationList() {
 
   return (
     <div className="flex flex-col gap-0">
-      {displayList.map((notification, index) => (
+      {paginatedList.map((notification, index) => (
         <div
           key={notification.id}
           className={`flex items-start gap-4 px-6 py-6 border-b border-brown-200 hover:bg-brown-100 transition-colors duration-300 ${
-            index === displayList.length - 1 ? 'border-b-0' : ''
+            index === paginatedList.length - 1 ? 'border-b-0' : ''
           } ${!notification.is_read ? 'bg-brand-red/5' : ''}`}
         >
           {/* Avatar */}
@@ -183,6 +202,57 @@ export function NotificationList() {
           )}
         </div>
       ))}
+      
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 py-6 body-1-brown-600 border-t border-brown-200">
+          {/* Prev */}
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded-full border border-brown-300 transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${
+              currentPage === 1
+                ? "bg-brown-100 text-brown-400"
+                : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md"
+            }`}
+          >
+            &lt; Prev
+          </button>
+
+          {/* Page numbers */}
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                type="button"
+                onClick={() => handlePageChange(page)}
+                className={`min-w-[32px] h-8 rounded-full px-2 text-center transition-all duration-300 ${
+                  currentPage === page
+                    ? "bg-brown-500 text-white shadow-md"
+                    : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          {/* Next */}
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded-full border border-brown-300 transition-all duration-300 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${
+              currentPage === totalPages
+                ? "bg-brown-100 text-brown-400"
+                : "bg-white text-brown-600 hover:bg-brown-100 hover:shadow-md"
+            }`}
+          >
+            Next &gt;
+          </button>
+        </div>
+      )}
     </div>
   );
 }
