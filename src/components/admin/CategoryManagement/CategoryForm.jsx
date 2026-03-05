@@ -23,7 +23,12 @@ export function CategoryForm() {
         try {
           setIsLoading(true);
           const response = await axios.get(`${API_BASE_URL}/categories`);
-          const category = response.data.find((cat) => cat.id === parseInt(id));
+          const raw = response.data;
+          const list = Array.isArray(raw)
+            ? raw
+            : raw?.data ?? raw?.categories ?? [];
+          const safeList = Array.isArray(list) ? list : [];
+          const category = safeList.find((cat) => cat.id === parseInt(id));
           if (category) {
             setCategoryName(category.name);
           } else {

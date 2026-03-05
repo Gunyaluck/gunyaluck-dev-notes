@@ -46,7 +46,12 @@ export function ArticleForm() {
       try {
         setCategoriesLoading(true);
         const response = await axios.get(`${API_BASE_URL}/categories`);
-        const categoriesData = response.data.map((cat) => ({
+        const raw = response.data;
+        const list = Array.isArray(raw)
+          ? raw
+          : raw?.data ?? raw?.categories ?? [];
+        const safeList = Array.isArray(list) ? list : [];
+        const categoriesData = safeList.map((cat) => ({
           id: cat.id,
           value: cat.name,
           label: cat.name,
