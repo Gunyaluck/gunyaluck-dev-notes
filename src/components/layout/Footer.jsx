@@ -29,9 +29,9 @@ export function Footer() {
             <a
               href="#"
               className="w-6 h-6 rounded-full bg-brown-500 flex items-center justify-center hover:bg-brown-500 transition-colors"
-              aria-label="Google"
+              aria-label="Resume"
             >
-              <span className="text-white text-sm">G</span>
+              <span className="text-white text-sm font-bold">CV</span>
             </a>
           </div>
         </div>

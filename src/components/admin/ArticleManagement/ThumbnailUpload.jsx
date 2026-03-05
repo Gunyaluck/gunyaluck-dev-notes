@@ -38,7 +38,6 @@ export function ThumbnailUpload({ thumbnailPreview, onThumbnailChange }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <label className="body-1-brown-400 font-semibold">Thumbnail image</label>
       <div className="flex items-end gap-4">
         <div className="w-[460px] h-[260px] bg-brown-200 rounded-lg border border-brown-300 flex items-center justify-center overflow-hidden shrink-0">
           {thumbnailPreview ? (

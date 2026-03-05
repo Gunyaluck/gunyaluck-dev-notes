@@ -1,22 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { User, RotateCcw, LogOut, Bell, SquareArrowOutUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../common/Button";
 import { NotificationDropdown } from "./NotificationDropdown";
+import { useAuth } from "../../contexts/authentication";
 
-export function UserDropDown({ admin, user, onClose, onLogout, hideBell = false, showAdminPanel = false, mockNotifications }) {
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showAdminPanel = false }) {
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(false);
 
   const isAdmin = showAdminPanel || !!admin;
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setHasNotifications(false);
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    axios
+      .get(`${API_BASE_URL}/notifications`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : [];
+        setHasNotifications(list.some((n) => !n.is_read));
+      })
+      .catch(() => setHasNotifications(false));
+  }, [isAuthenticated]);
 
   const displayUser = isAdmin ? {
     name: admin?.adminName || admin?.name || "Admin",
     avatar: admin?.adminAvatar || admin?.avatar || null,
   } : (user || { name: "User", avatar: null });
-
-  // Mock: มีการแจ้งเตือน 2 รายการ
-  const hasNotifications = true;
 
   const handleProfile = () => {
     // Navigate to profile page
@@ -61,10 +80,10 @@ export function UserDropDown({ admin, user, onClose, onLogout, hideBell = false,
       {/* User Info Section */}
       <div className="flex items-center gap-3 p-4">
         <div className="w-10 h-10 rounded-full bg-brown-300 flex items-center justify-center shrink-0 overflow-hidden">
-          {displayUser?.avatar ? (
+          {user?.profilePic || user?.avatar ? (
             <img
-              src={displayUser.avatar}
-              alt={displayUser.name || (isAdmin ? "Admin" : "User")}
+              src={user.profilePic || user.avatar}
+              alt={user?.username || user?.name || "User"}
               className="w-full h-full object-cover"
             />
           ) : (
@@ -103,7 +122,7 @@ export function UserDropDown({ admin, user, onClose, onLogout, hideBell = false,
             <NotificationDropdown
               isOpen={showNotificationDropdown}
               onClose={() => setShowNotificationDropdown(false)}
-              mockNotifications={mockNotifications}
+              onHasUnread={setHasNotifications}
             />
           </div>
         )}

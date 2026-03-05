@@ -49,6 +49,9 @@ function AuthProvider({ children }) {
         getUserLoading: false,
       }));
     } catch (error) {
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+      }
       setState((prevState) => ({
         ...prevState,
         error: error.message,

@@ -208,7 +208,7 @@ export function ArticleForm() {
             // If PUT doesn't support FormData, show clear error message
             console.error("Error uploading new thumbnail:", uploadError);
             console.error("Upload error response:", uploadError.response?.data);
-            
+
             if (uploadError.response?.status === 401) {
               toast.error("Authentication required. Please login again.");
               localStorage.removeItem("token");
@@ -218,7 +218,7 @@ export function ArticleForm() {
               setSaving(false);
               return;
             }
-            
+
             // Backend doesn't support FormData in PUT endpoint
             toast.error("Changing thumbnail in edit mode is not supported. Please use the existing thumbnail or contact support to enable image upload in update mode.", {
               duration: 7000,
@@ -229,7 +229,7 @@ export function ArticleForm() {
         } else {
           // Use existing thumbnail URL
           let imageUrl = thumbnailPreview || "";
-          
+
           if (thumbnailPreview && !thumbnailPreview.startsWith('http://') && !thumbnailPreview.startsWith('https://')) {
             toast.error("Please use a valid image URL for the thumbnail");
             setSaving(false);
@@ -284,7 +284,7 @@ export function ArticleForm() {
         formDataToSend.append("description", formData.introduction);
         formDataToSend.append("content", formData.content);
         formDataToSend.append("status_id", STATUS_DRAFT.toString());
-        
+
         // เพิ่ม user_id ของคนที่สร้างบทความ
         if (user?.id) {
           formDataToSend.append("user_id", user.id.toString());
@@ -323,7 +323,7 @@ export function ArticleForm() {
       console.error("Error saving draft:", error);
       console.error("Error response:", error.response?.data);
       console.error("Error status:", error.response?.status);
-      
+
       // Handle authentication errors
       if (error.response?.status === 401) {
         toast.error("Authentication required. Please login again.");
@@ -334,16 +334,16 @@ export function ArticleForm() {
         setSaving(false);
         return;
       }
-      
+
       // Show more detailed error message
-      const errorMessage = error.response?.data?.message 
-        || error.response?.data?.error 
-        || error.message 
+      const errorMessage = error.response?.data?.message
+        || error.response?.data?.error
+        || error.message
         || "Failed to save article";
-      
+
       toast.error(errorMessage, {
-        description: error.response?.status === 500 
-          ? "Server error. Please check console for details." 
+        description: error.response?.status === 500
+          ? "Server error. Please check console for details."
           : "Please check your input and try again.",
         duration: 5000,
       });
@@ -396,8 +396,6 @@ export function ArticleForm() {
           formDataToSend.append("status_id", STATUS_PUBLISHED.toString());
           formDataToSend.append("like_count", currentLikeCount.toString());
 
-          // Try to use PUT endpoint with FormData (if backend supports it)
-          // Otherwise, we'll need to create a new endpoint or handle differently
           try {
             await axios.put(
               `${API_BASE_URL}/posts/${id}`,
@@ -410,11 +408,6 @@ export function ArticleForm() {
               }
             );
           } catch (uploadError) {
-            // If PUT doesn't support FormData, try alternative approach
-            // If PUT doesn't support FormData, show clear error message
-            console.error("Error uploading new thumbnail:", uploadError);
-            console.error("Upload error response:", uploadError.response?.data);
-            
             if (uploadError.response?.status === 401) {
               toast.error("Authentication required. Please login again.");
               localStorage.removeItem("token");
@@ -424,7 +417,7 @@ export function ArticleForm() {
               setSaving(false);
               return;
             }
-            
+
             // Backend doesn't support FormData in PUT endpoint
             toast.error("Changing thumbnail in edit mode is not supported. Please use the existing thumbnail or contact support to enable image upload in update mode.", {
               duration: 7000,
@@ -435,7 +428,7 @@ export function ArticleForm() {
         } else {
           // Use existing thumbnail URL
           let imageUrl = thumbnailPreview || "";
-          
+
           if (thumbnailPreview && !thumbnailPreview.startsWith('http://') && !thumbnailPreview.startsWith('https://')) {
             toast.error("Please use a valid image URL for the thumbnail");
             setSaving(false);
@@ -493,24 +486,13 @@ export function ArticleForm() {
         formDataToSend.append("description", formData.introduction);
         formDataToSend.append("content", formData.content);
         formDataToSend.append("status_id", STATUS_PUBLISHED.toString());
-        
+
         // เพิ่ม user_id ของคนที่สร้างบทความ
         if (user?.id) {
           formDataToSend.append("user_id", user.id.toString());
         } else if (user?.user_id) {
           formDataToSend.append("user_id", user.user_id.toString());
         }
-
-        // Debug: Log form data before sending
-        console.log("Sending form data:", {
-          title: formData.title,
-          category_id: categoryId,
-          description: formData.introduction,
-          content: formData.content ? `${formData.content.substring(0, 50)}...` : "empty",
-          status_id: STATUS_PUBLISHED,
-          hasThumbnail: !!formData.thumbnail,
-          user_id: user?.id || user?.user_id,
-        });
 
         await axios.post(`${API_BASE_URL}/posts`, formDataToSend, {
           headers: {
@@ -540,10 +522,6 @@ export function ArticleForm() {
       }
       navigate("/admin/article-management");
     } catch (error) {
-      console.error("Error saving article:", error);
-      console.error("Error response:", error.response?.data);
-      console.error("Error status:", error.response?.status);
-      
       // Handle authentication errors
       if (error.response?.status === 401) {
         toast.error("Authentication required. Please login again.");
@@ -554,16 +532,16 @@ export function ArticleForm() {
         setSaving(false);
         return;
       }
-      
+
       // Show more detailed error message
-      const errorMessage = error.response?.data?.message 
-        || error.response?.data?.error 
-        || error.message 
+      const errorMessage = error.response?.data?.message
+        || error.response?.data?.error
+        || error.message
         || "Failed to save article";
-      
+
       toast.error(errorMessage, {
-        description: error.response?.status === 500 
-          ? "Server error. Please check console for details." 
+        description: error.response?.status === 500
+          ? "Server error. Please check console for details."
           : "Please check your input and try again.",
         duration: 5000,
       });
@@ -613,7 +591,7 @@ export function ArticleForm() {
       navigate("/admin/article-management");
     } catch (error) {
       console.error("Error deleting article:", error);
-      
+
       if (error.response?.status === 401) {
         toast.error("Authentication required. Please login again.");
         localStorage.removeItem("token");
@@ -623,7 +601,7 @@ export function ArticleForm() {
       } else {
         toast.error(error.response?.data?.message || "Failed to delete article");
       }
-      
+
       setShowDeleteModal(false);
     } finally {
       setDeleting(false);
