@@ -27,7 +27,11 @@ export function CategoryManagementPage() {
       try {
         setCategoriesLoading(true);
         const response = await axios.get(`${API_BASE_URL}/categories`);
-        setCategories(response.data);
+        const raw = response.data;
+        const list = Array.isArray(raw)
+          ? raw
+          : raw?.data ?? raw?.categories ?? [];
+        setCategories(Array.isArray(list) ? list : []);
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
