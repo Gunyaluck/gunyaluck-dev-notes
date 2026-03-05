@@ -18,7 +18,7 @@ export const Button = forwardRef(({
   const variantClasses = {
     primary: "bg-brown-600 text-white rounded-full hover:bg-brown-500 body-1-white",
     secondary: "bg-brown-600 text-white rounded-full hover:bg-brown-200 hover:text-brown-600 body-1-white",
-    outline: "border border-brown-400 bg-transparent text-brown-600 rounded-full hover:bg-brown-600 hover:text-white body-1-brown-600",
+    outline: "border border-brown-400 bg-transparent text-brown-600 rounded-full hover:bg-brown-300 hover:text-white body-1-brown-600",
     text: "body-1-brown-500 hover:text-brown-600 underline bg-transparent border-none p-0",
     icon: "flex items-center justify-center rounded-full bg-white border border-brown-300 hover:bg-brown-100",
     "icon-notification": "flex items-center justify-center rounded-full bg-white border border-brown-300 hover:bg-brown-100",

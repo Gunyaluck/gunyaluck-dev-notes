@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ViewMoreButton } from "./ViewMoreButton";
 
-export function ArticleCard({ selectedCategory, searchQuery }) {
+export function ArticleCard({ selectedCategory, searchQuery, article }) {
   const [articles, setArticles] = useState([]);
   const [page, setPage] = useState(1);
   const [displayCount, setDisplayCount] = useState(6);
@@ -13,7 +13,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  
+
   const fetchArticlesData = async (pageNum = 1, append = false) => {
     try {
       const categoryParam = selectedCategory === "All" ? undefined : selectedCategory;
@@ -27,12 +27,24 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
           },
         }
       );
-      
+      const data = response.data;
+      const rawPosts = data.posts ?? [];
+      const postsWithAuthor = rawPosts.map((p) => {
+        const author = p.author_name ?? "";
+        const authorAvatar = p.author_avatar ?? null;
+        return {
+          ...p,
+          author,
+          authorAvatar,
+          date: p.date ?? p.created_at ?? p.published_at,
+        };
+      });
+
       if (append) {
-        setArticles(prevArticles => [...prevArticles, ...response.data.posts]);
+        setArticles(prevArticles => [...prevArticles, ...postsWithAuthor]);
       } else {
-        setArticles(response.data.posts);
-        setDisplayCount(6); // Reset display count when fetching new category
+        setArticles(postsWithAuthor);
+        setDisplayCount(6);
       }
 
       setHasMore(response.data.currentPage < response.data.totalPages);
@@ -63,7 +75,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
   const filteredArticles = useMemo(() => {
     if (!Array.isArray(articles)) return [];
 
-    let filtered = articles;
+    let filtered = articles.filter((article) => Number(article.status_id) === 2);
 
     // Filter by category - Show all if "All" or "all" is selected
     if (selectedCategory && selectedCategory !== "All") {
@@ -130,7 +142,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
 
           {/* Article Content */}
           <div className="flex flex-col gap-4 px-4 pb-4"
-            >
+          >
             {/* Category Tag */}
             <div className="w-fit">
               <span className="px-3 py-1 rounded-full bg-brand-green-soft body-2-green-600 font-medium transition-colors duration-300 group-hover:bg-brand-green group-hover:text-white">
@@ -154,18 +166,20 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
               {article.authorAvatar ? (
                 <img
                   src={article.authorAvatar}
-                  alt={article.author}
+                  alt={article.author || "Author"}
                   className="w-8 h-8 rounded-full object-cover transition-transform duration-300 group-hover:scale-110 ring-2 ring-transparent group-hover:ring-brand-green"
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-brown-300 flex items-center justify-center transition-all duration-300 group-hover:bg-brand-green group-hover:text-white">
-                  <span className="body-3">TP</span>
+                  <span className="body-3">
+                    {article.author ? article.author.charAt(0).toUpperCase() : "A"}
+                  </span>
                 </div>
               )}
               <div className="flex flex-row gap-4 items-center">
-                <span className="body-1-brown-600 transition-colors duration-300 group-hover:text-brand-green">{article.author}</span>
+                <span className="body-1-brown-600 transition-colors duration-300 group-hover:text-brand-green">{article.author || "Author"}</span>
                 <span className="w-px h-4 bg-brown-300"></span>
-                <span className="body-2">{formatDate(article.date)}</span>
+                <span className="body-2">{formatDate(article.date ?? article.created_at)}</span>
               </div>
             </div>
           </div>
@@ -175,8 +189,8 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
 
       {/* View More Button */}
       {(hasMore || filteredArticles.length > displayCount) && (
-        <ViewMoreButton 
-          onLoadMore={handleLoadMore} 
+        <ViewMoreButton
+          onLoadMore={handleLoadMore}
           isLoading={isLoadingMore}
         />
       )}

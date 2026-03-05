@@ -25,7 +25,7 @@ export function CategoryTab({ selectedCategory, onCategoryChange }) {
           value: cat.name,
           label: cat.name,
         }));
-        setCategories(categoriesData);
+        setCategories([{ value: "All", label: "All" }, ...categoriesData]);
       } catch (error) {
         console.error("Error fetching categories:", error);
         setCategories([]);

@@ -1,6 +1,7 @@
 /* NavBar - Unified header for guest, member, and admin */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Bell, ChevronDown } from "lucide-react";
 import logo from "../../assets/logo/logo.svg";
 import { Button } from "../common/Button";
@@ -8,15 +9,33 @@ import { UserDropDown } from "./UserDropDown";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useAuth } from "../../contexts/authentication";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function NavBar() {
   const { user, userRole, logout, isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(false);
   const navigate = useNavigate();
 
   const isAdmin = userRole === "admin";
-  const hasNotifications = true;
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setHasNotifications(false);
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    axios
+      .get(`${API_BASE_URL}/notifications`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : [];
+        setHasNotifications(list.some((n) => !n.is_read));
+      })
+      .catch(() => setHasNotifications(false));
+  }, [isAuthenticated]);
 
   const handleLandingPage = () => {
     navigate("/");
@@ -161,6 +180,7 @@ function NavBar() {
                 <NotificationDropdown
                   isOpen={showNotificationDropdown}
                   onClose={() => setShowNotificationDropdown(false)}
+                  onHasUnread={setHasNotifications}
                 />
               </div>
 
