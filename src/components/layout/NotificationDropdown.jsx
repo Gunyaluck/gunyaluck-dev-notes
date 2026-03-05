@@ -56,16 +56,23 @@ export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
 
     if (!isOpen) return null;
 
-    const displayList = notifications.map((n) => ({
-        id: n.id,
-        author: n.actor_name ?? n.actorName ?? "Someone",
-        authorAvatar: n.actor_avatar ?? n.actorAvatar ?? null,
-        message: getMessageFromType(n.type),
-        timestamp: n.created_at ?? n.timestamp,
-        type: n.type,
-        post_id: n.post_id,
-        is_read: n.is_read,
-    }));
+    const displayList = notifications
+        .map((n) => ({
+            id: n.id,
+            author: n.actor_name ?? n.actorName ?? "Someone",
+            authorAvatar: n.actor_avatar ?? n.actorAvatar ?? null,
+            message: getMessageFromType(n.type),
+            timestamp: n.created_at ?? n.timestamp,
+            type: n.type,
+            post_id: n.post_id,
+            is_read: n.is_read,
+        }))
+        // เรียงตามเวลาใหม่สุดอยู่บนเสมอ ไม่ว่าจะเป็น like/comment/reply
+        .sort((a, b) => {
+            const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+            const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+            return tb - ta;
+        });
 
     const formatNotificationTime = (timestamp) => {
         if (!timestamp) return "";

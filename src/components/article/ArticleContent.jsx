@@ -58,7 +58,12 @@ export function ArticleContent({ id }) {
 
     const mapComment = (c) => ({
         id: c.id,
-        parent_id: c.parent_id ?? c.parentId ?? null,
+        parent_id:
+            c.parent_id ??
+            c.parentId ??
+            c.parent_comment_id ??
+            c.parentCommentId ??
+            null,
         author: c.name ?? c.author_name ?? c.authorName ?? c.user_name ?? c.userName ?? c.author ?? "User",
         authorAvatar: c.profile_pic ?? c.author_avatar ?? c.authorAvatar ?? c.user_avatar ?? c.userAvatar ?? c.profilePic ?? null,
         date: c.created_at ?? c.date ?? new Date().toISOString(),
@@ -140,9 +145,8 @@ export function ArticleContent({ id }) {
             setShowAlertCreateAccount(true);
             return;
         }
-        const rawUserId = user?.id ?? user?.user_id;
-        const userId = typeof rawUserId === "number" ? rawUserId : parseInt(String(rawUserId), 10);
-        if (!rawUserId || Number.isNaN(userId)) {
+        const userId = user?.id ?? user?.user_id;
+        if (!userId) {
             toast.error("User information not found. Please log in again.");
             return;
         }
