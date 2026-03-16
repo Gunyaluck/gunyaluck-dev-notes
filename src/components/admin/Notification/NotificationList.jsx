@@ -46,18 +46,18 @@ export function NotificationList() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => isAuthenticated && !!user);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const notificationsPerPage = 10;
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
-      setLoading(false);
       return;
     }
 
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
     const token = localStorage.getItem("token");

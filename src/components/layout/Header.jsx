@@ -23,7 +23,6 @@ function NavBar() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setHasNotifications(false);
       return;
     }
     const token = localStorage.getItem("token");
