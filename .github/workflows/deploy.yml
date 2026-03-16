@@ -29,11 +29,21 @@ jobs:
       - name: Build
         run: npm run build
 
-      # === Deploy step (Ubuntu server with PM2 + ecosystem.config.js) ===
-      # This connects to your Ubuntu server over SSH, pulls the latest code,
-      # installs dependencies, builds, and starts/reloads the app via PM2 ecosystem file.
-      - name: Deploy to Ubuntu server with PM2
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      # === Deploy: copy built files (dist) to Ubuntu server ===
+      - name: Copy dist to Ubuntu server (main branch)
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          source: "dist/*"
+          target: ${{ secrets.REMOTE_PATH }}
+
+      # === Reload app with PM2 using ecosystem.config.js ===
+      - name: Reload app with PM2 (main branch)
+        if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -42,7 +52,4 @@ jobs:
           port: ${{ secrets.REMOTE_PORT }}
           script: |
             cd ${{ secrets.REMOTE_PATH }}
-            git pull origin main
-            npm ci
-            npm run build
             pm2 startOrReload ecosystem.config.js --update-env
