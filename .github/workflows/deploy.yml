@@ -1,0 +1,48 @@
+name: CI & Deploy
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      # === Deploy step (Ubuntu server with PM2 + ecosystem.config.js) ===
+      # This connects to your Ubuntu server over SSH, pulls the latest code,
+      # installs dependencies, builds, and starts/reloads the app via PM2 ecosystem file.
+      - name: Deploy to Ubuntu server with PM2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            cd ${{ secrets.REMOTE_PATH }}
+            git pull origin main
+            npm ci
+            npm run build
+            pm2 startOrReload ecosystem.config.js --update-env
