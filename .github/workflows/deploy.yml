@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
-          source: "dist/,ecosystem.config.js,package.json,package-lock.json"
+          source: "dist/,ecosystem.config.cjs,package.json,package-lock.json"
           target: ${{ secrets.REMOTE_PATH }}
 
       # === Install deps + reload PM2 on server ===
@@ -53,4 +53,4 @@ jobs:
           script: |
             cd ${{ secrets.REMOTE_PATH }}
             npm ci --omit=dev
-            pm2 startOrReload ecosystem.config.js --update-env
+            pm2 startOrReload ecosystem.config.cjs --update-env
