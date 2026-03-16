@@ -29,7 +29,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      # === Deploy: copy built files + config to Ubuntu server ===
+      # === Deploy: copy files to Ubuntu server ===
       - name: Copy files to Ubuntu server
         if: github.ref == 'refs/heads/main'
         uses: appleboy/scp-action@v0.1.7
@@ -41,7 +41,7 @@ jobs:
           source: "dist/,ecosystem.config.cjs,package.json,package-lock.json,vite.config.js"
           target: ${{ secrets.REMOTE_PATH }}
 
-      # === Install deps + reload PM2 on server ===
+      # === Install all deps + reload PM2 ===
       - name: Install and reload PM2
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v1.2.0
@@ -52,5 +52,5 @@ jobs:
           port: ${{ secrets.REMOTE_PORT }}
           script: |
             cd ${{ secrets.REMOTE_PATH }}
-            npm ci --omit=dev
+            npm ci
             pm2 startOrReload ecosystem.config.cjs --update-env
