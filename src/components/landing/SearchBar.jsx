@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useSearch } from "../../hooks/useSearch";
@@ -22,18 +22,15 @@ export function SearchBar({ onSearch }) {
   
   useClickOutside([searchRef, suggestionsRef], handleClickOutside);
 
-  useEffect(() => {
-    if (searchQuery.trim().length > 0) {
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    onSearch(e.target.value);
+    const value = e.target.value;
+    if (value.trim().length > 0) {
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
     }
-  }, [searchQuery, suggestions.length]);
-
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    onSearch(e.target.value);
   };
 
   const handleSuggestionClick = (articleId) => {

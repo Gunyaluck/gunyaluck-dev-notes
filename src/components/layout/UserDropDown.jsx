@@ -18,7 +18,6 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setHasNotifications(false);
       return;
     }
     const token = localStorage.getItem("token");

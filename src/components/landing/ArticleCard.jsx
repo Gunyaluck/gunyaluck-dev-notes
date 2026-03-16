@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ViewMoreButton } from "./ViewMoreButton";
 
-export function ArticleCard({ selectedCategory, searchQuery, article }) {
+export function ArticleCard({ selectedCategory, searchQuery }) {
   const [articles, setArticles] = useState([]);
   const [page, setPage] = useState(1);
   const [displayCount, setDisplayCount] = useState(6);

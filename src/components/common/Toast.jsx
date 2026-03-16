@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import { toast } from "sonner";
 import { X } from "lucide-react";
 import { Button } from "./Button";

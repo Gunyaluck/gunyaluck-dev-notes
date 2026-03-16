@@ -30,7 +30,7 @@ export function HeroImage() {
         const data = response.data;
         const url = data?.profile_pic ?? data?.profilePic ?? data?.avatar ?? data?.hero_image ?? data?.heroImage ?? null;
         if (!cancelled && url) setHeroImageUrl(url);
-      } catch (err) {
+      } catch {
         if (!cancelled) setHeroImageUrl(null);
       }
     };
@@ -67,7 +67,7 @@ export function AuthorCard() {
             bio: data?.bio ?? "",
           });
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) setAuthor({ name: "", bio: "" });
       }
     };

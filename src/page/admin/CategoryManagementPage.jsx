@@ -13,7 +13,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export function CategoryManagementPage() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
@@ -25,7 +24,6 @@ export function CategoryManagementPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        setCategoriesLoading(true);
         const response = await axios.get(`${API_BASE_URL}/categories`);
         const raw = response.data;
         const list = Array.isArray(raw)
@@ -36,8 +34,6 @@ export function CategoryManagementPage() {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
         setCategories([]);
-      } finally {
-        setCategoriesLoading(false);
       }
     };
 
