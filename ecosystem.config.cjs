@@ -1,5 +1,3 @@
-/* global module, __dirname, process */
-
 module.exports = {
   apps: [
     {
@@ -15,4 +13,3 @@ module.exports = {
     },
   ],
 };
-
