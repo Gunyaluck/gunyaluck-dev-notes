@@ -16,6 +16,6 @@ export default defineConfig({
   preview: {
     host: "0.0.0.0",
     port: 4173,
-    allowedHosts: ["pjsdf.online", "www.pjsdf.online"],
+    allowedHosts: ["pjsdf.online"],
   },
 })
