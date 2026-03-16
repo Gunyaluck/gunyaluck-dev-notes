@@ -29,8 +29,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      # === Deploy: copy built files (dist) to Ubuntu server ===
-      - name: Copy dist to Ubuntu server (main branch)
+      # === Deploy: copy built files + config to Ubuntu server ===
+      - name: Copy files to Ubuntu server
         if: github.ref == 'refs/heads/main'
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -38,11 +38,11 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
-          source: "dist/*"
+          source: "dist/,ecosystem.config.js,package.json,package-lock.json"
           target: ${{ secrets.REMOTE_PATH }}
 
-      # === Reload app with PM2 using ecosystem.config.js ===
-      - name: Reload app with PM2 (main branch)
+      # === Install deps + reload PM2 on server ===
+      - name: Install and reload PM2
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -52,4 +52,5 @@ jobs:
           port: ${{ secrets.REMOTE_PORT }}
           script: |
             cd ${{ secrets.REMOTE_PATH }}
+            npm ci --omit=dev
             pm2 startOrReload ecosystem.config.js --update-env
