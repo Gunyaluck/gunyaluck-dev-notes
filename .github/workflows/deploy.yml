@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
-          source: "dist/,ecosystem.config.cjs,package.json,package-lock.json"
+          source: "dist/,ecosystem.config.cjs,package.json,package-lock.json,vite.config.js"
           target: ${{ secrets.REMOTE_PATH }}
 
       # === Install deps + reload PM2 on server ===
