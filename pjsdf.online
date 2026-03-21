@@ -1,7 +1,8 @@
-# Reverse proxy → backend ที่ PM2 ฟัง (vite preview / npm run preview) บน 127.0.0.1:4000
+# Reverse proxy → SPA จาก PM2 (vite preview) บน 127.0.0.1:4173
+# Express API ใช้พอร์ต 3000 แยกต่างหาก — อย่าให้ชนกับ preview
 # พอร์ตต้องตรงกับ ecosystem.config.cjs (PORT) และ vite.config.js → preview.port
 upstream pjsdf_backend {
-    server 127.0.0.1:4000;
+    server 127.0.0.1:4173;
 }
 
 # แนะนำ: ใส่ใน http { } ของ nginx.conf แล้วเปลี่ยนบรรทัด Connection ด้านล่างเป็น

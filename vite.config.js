@@ -9,16 +9,17 @@ import path from "path"
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    port: 4000,
+    port: 5173,
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Static preview (PM2 + nginx). ไม่ใช้ 3000 — พอร์ตนั้นให้ Express API
   preview: {
     host: "0.0.0.0",
-    port: 4000,
+    port: 4173,
     allowedHosts: ["pjsdf.online"],
   },
 })
