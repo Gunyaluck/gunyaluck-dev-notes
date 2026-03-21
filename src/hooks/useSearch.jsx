@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "@/config/env";
 
 /**
  * Search articles with debouncing and filtering
@@ -25,7 +26,7 @@ export function useSearch(query) {
         setError(null);
   
         try {
-          const response = await axios.get("https://blog-post-project-api.vercel.app/posts", {
+          const response = await axios.get(`${API_BASE_URL}/posts`, {
             params: {
               page: 1,
               limit: 10,

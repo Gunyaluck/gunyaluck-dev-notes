@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "@/config/env";
 
 const AuthContext = React.createContext();
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function AuthProvider({ children }) {
   const [state, setState] = useState(() => {

@@ -7,8 +7,7 @@ import { ErrorMessage } from "../../auth/ErrorMessage";
 import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
 import { useAuth } from "../../../contexts/authentication";
 import { showSuccessToast } from "../../common/Toast";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function ResetPasswordForm() {
   const { user } = useAuth();

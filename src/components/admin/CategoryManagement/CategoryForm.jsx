@@ -4,8 +4,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function CategoryForm() {
   const navigate = useNavigate();

@@ -10,6 +10,7 @@ import { LoadingSpinner } from "../common/LoadingSpinner";
 import axios from "axios";
 import { toast } from "sonner";
 import { useAuth } from "../../contexts/authentication";
+import { API_BASE_URL } from "@/config/env";
 
 export function ArticleContent({ id }) {
     const [article, setArticle] = useState(null);
@@ -23,7 +24,6 @@ export function ArticleContent({ id }) {
     const [likeLoading, setLikeLoading] = useState(false);
     const [showAlertCreateAccount, setShowAlertCreateAccount] = useState(false);
     const [openReplyBox, setOpenReplyBox] = useState(null);
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const { isAuthenticated, user } = useAuth();
     const isLoggedIn = isAuthenticated;
     

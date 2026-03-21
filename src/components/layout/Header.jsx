@@ -8,8 +8,7 @@ import { Button } from "../common/Button";
 import { UserDropDown } from "./UserDropDown";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useAuth } from "../../contexts/authentication";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 function NavBar() {
   const { user, userRole, logout, isAuthenticated } = useAuth();

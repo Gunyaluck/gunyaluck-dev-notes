@@ -7,8 +7,7 @@ import { Button } from "../../components/common/Button";
 import { Input } from "../../components/ui/input";
 import { DeleteCategoryModal } from "../../components/admin/CategoryManagement/DeleteCategoryModal.jsx";
 import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function CategoryManagementPage() {
   const navigate = useNavigate();

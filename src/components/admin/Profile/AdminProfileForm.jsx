@@ -5,8 +5,7 @@ import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
 import { useAuth } from "../../../contexts/authentication";
 import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function AdminProfileForm() {
   const { user, fetchUser } = useAuth();

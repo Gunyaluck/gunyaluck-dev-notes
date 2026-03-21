@@ -1,16 +1,14 @@
-# Reverse proxy → SPA จาก PM2 (npm run preview:pm2 = serve dist) บน 127.0.0.1:4173
-# Express API ใช้พอร์ต 3000 แยกต่างหาก — อย่าให้ชนกับ preview
-# พอร์ตต้องตรงกับ ecosystem.config.cjs (PORT) และ vite.config.js → preview.port
-upstream pjsdf_backend {
-    server 127.0.0.1:4173;
-}
+# คัดลอกไปใช้บน VPS เช่น /etc/nginx/sites-available/pjsdf.online แล้ว ln -s + nginx -t + reload
+#
+# SPA จากโฟลเดอร์ dist (แนะนำ — ไม่ผ่าน Node จึงไม่ 502 เมื่อ PM2 ล่ม)
+# ปรับ root ให้ตรง path โปรเจกต์บน VPS
+#
+# API: https://pjsdf.online/api/... → proxy ไป Express ที่ 127.0.0.1:3000/...
+# ตั้ง VITE_API_URL=https://pjsdf.online/api ตอน build frontend
 
-# แนะนำ: ใส่ใน http { } ของ nginx.conf แล้วเปลี่ยนบรรทัด Connection ด้านล่างเป็น
-#   proxy_set_header Connection $connection_upgrade;
-# เพื่อให้ทั้ง HTTP ปกติและ WebSocket ทำงานถูกต้อง
-# map $http_upgrade $connection_upgrade {
-#     default upgrade;
-#     ''      close;
+# --- ทางเลือก: proxy ไป PM2 preview ---
+# upstream pjsdf_backend {
+#     server 127.0.0.1:4173;
 # }
 
 server {
@@ -25,9 +23,11 @@ server {
 
     client_max_body_size 20m;
 
+    root /var/www/gunyaluck-dev-notes/dist;
+    index index.html;
+
     gzip on;
     gzip_vary on;
-    gzip_proxied any;
     gzip_comp_level 5;
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss image/svg+xml;
 
@@ -35,24 +35,46 @@ server {
     add_header X-Frame-Options SAMEORIGIN always;
     add_header Referrer-Policy strict-origin-when-cross-origin always;
 
-    location / {
-        proxy_pass http://pjsdf_backend;
-        proxy_http_version 1.1;
+    # ไฟล์แฮชจาก Vite — cache นานได้
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
 
+    # Express (PM2) — /api/posts → backend /posts (proxy_pass ลงท้ายด้วย /)
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000/;
+        proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        proxy_connect_timeout 60s;
-        proxy_send_timeout 60s;
-        proxy_read_timeout 86400s;
-
-        proxy_redirect off;
     }
+
+    location = /api {
+        return 301 https://$host/api/;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # --- แทนที่ location / ด้านบนด้วยแบบนี้ถ้าใช้ PM2 preview แทน static ---
+    # location / {
+    #     proxy_pass http://pjsdf_backend;
+    #     proxy_http_version 1.1;
+    #     proxy_set_header Host $host;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    #     proxy_set_header Upgrade $http_upgrade;
+    #     proxy_set_header Connection "upgrade";
+    #     proxy_connect_timeout 60s;
+    #     proxy_send_timeout 60s;
+    #     proxy_read_timeout 86400s;
+    #     proxy_redirect off;
+    # }
 }
 
 server {
@@ -60,7 +82,6 @@ server {
     listen [::]:80;
     server_name pjsdf.online www.pjsdf.online;
 
-    # ปรับ root ให้ตรงกับที่ Certbot ใช้ (ถ้า renew แบบ webroot)
     location ^~ /.well-known/acme-challenge/ {
         root /var/www/html;
         default_type "text/plain";
