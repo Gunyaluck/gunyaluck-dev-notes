@@ -80,7 +80,7 @@ npm install
 Create a `.env` file in `gunyaluck-dev-notes` (do **not** commit real secrets) and set, for example:
 
 ```bash
-VITE_API_BASE_URL=http://localhost:4000
+VITE_API_BASE_URL=http://localhost:3000
 ```
 
 `VITE_API_BASE_URL` is the base URL of the backend API and should match the Express backend port below.
@@ -91,7 +91,7 @@ VITE_API_BASE_URL=http://localhost:4000
 npm run dev
 ```
 
-By default, Vite runs at `http://localhost:5173`.
+By default, Vite runs at `http://localhost:5173` (see `vite.config.js` → `server.port`). The API backend uses port `3000` separately.
 
 ---
 
@@ -112,14 +112,14 @@ Create a `.env` file in `gunyaluck-dev-notes-backend` and define (example keys a
 DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
 SUPABASE_URL=https://<your-supabase-project>.supabase.co
 SUPABASE_ANON_KEY=<your-supabase-anon-key>
-PORT=4000
+PORT=3000
 ```
 
 Notes:
 
 - **DATABASE_URL**: PostgreSQL connection string
 - **SUPABASE_URL / SUPABASE_ANON_KEY**: used to connect to Supabase
-- **PORT**: Express server port (default in code is 4000)
+- **PORT**: Express server port (default in code is 3000)
 
 ### Run the backend (development)
 
@@ -128,7 +128,7 @@ cd gunyaluck-dev-notes-backend
 npm run start
 ```
 
-The server will run at `http://localhost:4000` (or the value of `PORT`) and exposes simple health endpoints:
+The server will run at `http://localhost:3000` (or the value of `PORT`) and exposes simple health endpoints:
 
 - `GET /` – basic server check
 - `GET /health` – database connectivity check
@@ -142,7 +142,7 @@ The server will run at `http://localhost:4000` (or the value of `PORT`) and expo
    - Configure `.env`, run `npm install` (first time only), then `npm run start`
 2. **Start the frontend**
    - Open a new terminal in `gunyaluck-dev-notes`
-   - Configure `.env` so `VITE_API_BASE_URL` points to the backend (for example `http://localhost:4000`)
+   - Configure `.env` so `VITE_API_BASE_URL` points to the backend (for example `http://localhost:3000`)
    - Run `npm install` (first time only) and then `npm run dev`
 3. Open `http://localhost:5173` in your browser to use the app.
 
@@ -154,7 +154,7 @@ The server will run at `http://localhost:4000` (or the value of `PORT`) and expo
 
 - `npm run dev` – start Vite development server
 - `npm run build` – build production bundle
-- `npm run preview` – preview the production build
+- `npm run preview` – preview the production build (default listen **4173** in `vite.config.js`, so it does not clash with the API on **3000**; PM2/nginx should target the same preview port)
 - `npm run lint` – run ESLint on the codebase
 
 ### Backend (`gunyaluck-dev-notes-backend`)
