@@ -3,6 +3,7 @@ import { formatDate } from "../../lib/utils";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ViewMoreButton } from "./ViewMoreButton";
+import { API_BASE_URL } from "@/config/env";
 
 export function ArticleCard({ selectedCategory, searchQuery }) {
   const [articles, setArticles] = useState([]);
@@ -12,7 +13,6 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const fetchArticlesData = async (pageNum = 1, append = false) => {
     try {

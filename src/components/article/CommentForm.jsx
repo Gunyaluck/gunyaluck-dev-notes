@@ -4,8 +4,7 @@ import { toast } from "sonner";
 import { AlertCreateAccount } from "../layout/AlertCreateAccount";
 import { Button } from "../common/Button";
 import { useAuth } from "../../contexts/authentication";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function CommentForm({ id, isLoggedIn, parentId, onCommentAdded }) {
     const { user } = useAuth();

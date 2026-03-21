@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../common/Button";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useAuth } from "../../contexts/authentication";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showAdminPanel = false }) {
   const { user, isAuthenticated } = useAuth();

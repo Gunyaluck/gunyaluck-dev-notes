@@ -7,8 +7,7 @@ import { User, RotateCcw, Upload } from "lucide-react";
 import { Button } from "../../common/Button";
 import { showSuccessToast } from "../../common/Toast";
 import { useAuth } from "../../../contexts/authentication";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function ProfileForm() {
     const { user, fetchUser } = useAuth();

@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../../contexts/authentication";
 import { LoadingSpinner } from "../../common/LoadingSpinner";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 function getMessageFromType(type) {
   switch (type) {

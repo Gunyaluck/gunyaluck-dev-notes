@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
 import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function AdminResetPasswordForm() {
   const navigate = useNavigate();
