@@ -61,11 +61,11 @@ function AuthProvider({ children }) {
         getUserLoading: false,
       }));
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   const login = async (email, password) => {
     try {

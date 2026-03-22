@@ -15,12 +15,10 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
 
   const isAdmin = showAdminPanel || !!admin;
+  const displayedUnreadCount = isAuthenticated ? unreadNotificationCount : 0;
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setUnreadNotificationCount(0);
-      return;
-    }
+    if (!isAuthenticated) return;
     const token = localStorage.getItem("token");
     if (!token) return;
     axios
@@ -106,8 +104,8 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
               size="icon-lg"
               className="relative w-12 h-12 bg-white border border-brown-300 hover:bg-brown-100 shrink-0"
               aria-label={
-                unreadNotificationCount > 0
-                  ? `Notifications, ${unreadNotificationCount} unread`
+                displayedUnreadCount > 0
+                  ? `Notifications, ${displayedUnreadCount} unread`
                   : "Notifications"
               }
               onClick={(e) => {
@@ -117,7 +115,7 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
             >
               <Bell className="w-5 h-5 text-brown-600" />
               {!showNotificationDropdown && (
-                <NotificationCountBadge count={unreadNotificationCount} />
+                <NotificationCountBadge count={displayedUnreadCount} />
               )}
             </Button>
 

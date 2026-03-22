@@ -33,7 +33,6 @@ export function NotificationDropdown({ isOpen, onClose, onUnreadCountChange }) {
     useEffect(() => {
         if (!isOpen || !isAuthenticated || !user) return;
         let cancelled = false;
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         const token = localStorage.getItem("token");
         axios
@@ -57,7 +56,7 @@ export function NotificationDropdown({ isOpen, onClose, onUnreadCountChange }) {
                 if (!cancelled) setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [isOpen, isAuthenticated, user]);
+    }, [isOpen, isAuthenticated, user, onUnreadCountChange]);
 
     const unreadCount = useMemo(
         () => notifications.filter((n) => !n.is_read).length,
