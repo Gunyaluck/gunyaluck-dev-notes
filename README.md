@@ -1,191 +1,213 @@
-## Gunyaluck Dev Notes – Frontend & Backend
+# Gunyaluck Dev Notes
 
-**Gunyaluck Dev Notes** is a full‑stack platform for long‑form developer notes and articles.  
-It is built as **two separate repositories** working together:
+A full-stack developer blog platform for writing and sharing technical articles and dev notes.  
+Built as a personal project to document my learning journey — from bootcamp through real-world development.
 
-- **Frontend** – Modern React + Vite SPA (this repo)  
-- **Backend** – Node.js + Express + PostgreSQL API in `gunyaluck-dev-notes-backend`
+🔗 **Live Demo:** [https://pjsdf.online](https://pjsdf.online)  
+📦 **Frontend Repo:** [gunyaluck-dev-notes](https://github.com/Gunyaluck/gunyaluck-dev-notes.git)  
+📦 **Backend Repo:** [gunyaluck-dev-notes-backend](https://github.com/Gunyaluck/gunyaluck-dev-notes-backend.git)
 
 ---
 
-## Highlights
+## Demo Accounts
 
-- **Clean reading experience** for technical articles and dev notes
-- **Full authentication flow** – sign up, login, profile, password reset
-- **Editor & admin tools** – manage posts, categories, and notifications
-- **Search & filter** – quickly find articles by title or category
-- **API‑driven architecture** – clear separation between frontend and backend
+> These accounts are provided for reviewers. Please do not change passwords or delete content.
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | testadmin@gmail.com | DevNotes2026! |
+| Member | testuser@gmail.com | DevNotes2026! |
+
+**Admin** can create/edit/delete articles, manage categories, and view notifications.  
+**Member** can read articles, comment, and like posts.
+
+---
+
+## Features
+
+**Public**
+- Browse and read articles with Markdown rendering
+- Search articles by title (with debounce)
+- Filter by category
+
+**Member (requires login)**
+- Sign up / Login / Reset password
+- Edit profile
+- Like and comment on articles
+
+**Admin**
+- Create, edit, and publish articles with thumbnail upload
+- Draft / Publish status management
+- Category management (CRUD)
+- Notification center
 
 ---
 
 ## Tech Stack
 
-- **Frontend**
-  - React 19, React Router
-  - Vite
-  - Tailwind CSS
-  - Axios
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, React Router v7, Vite 7 |
+| Styling | Tailwind CSS v4, Radix UI |
+| HTTP | Axios |
+| Auth (client) | jwt-decode |
+| Backend | Node.js, Express |
+| Database | PostgreSQL (via Supabase) |
+| Server | Ubuntu, Nginx, PM2 |
+| CI/CD | GitHub Actions |
 
-- **Backend**
-  - Node.js, Express
-  - PostgreSQL
-  - Supabase client
+---
+
+## Architecture
+
+Two separate repositories — frontend SPA calls backend REST API via environment variable.
+
+```
+Browser (React SPA)
+  └── Axios → VITE_API_BASE_URL
+        └── Express API
+              └── PostgreSQL (Supabase)
+```
+
+**Authentication:** JWT-based — token stored on client, decoded with `jwt-decode` to read role.  
+**Route guards:** Three types — `GuestRoute`, `AuthenticationRoute`, `ProtectedRoute (admin only)`  
+**CI/CD:** Push to `main` → GitHub Actions builds → SCP to Ubuntu server → PM2 restart
 
 ---
 
 ## Project Structure
 
-- **Frontend (this repo)**  
-  - Main features:
-    - Landing page, article viewing, search, categories
-    - Authentication: sign up, login, profile, password reset
-    - Admin area: manage posts, categories, notifications
-
-- **Backend (`gunyaluck-dev-notes-backend`)**  
-  - Layered architecture: `routes`, `controllers`, `services`, `repositories`
-  - Main endpoints:
-    - `/auth` – authentication and user registration
-    - `/posts` – post/article management
-    - `/categories` – category management
-    - `/notifications` – user notifications
-    - `/statuses` – post status management
-
----
-
-## Getting Started
-
-### 1) Clone both repositories
-
-Recommended folder structure:
-
-```text
-<root-folder>/
-  gunyaluck-dev-notes/          # frontend (this repo)
-  gunyaluck-dev-notes-backend/  # backend
+```
+gunyaluck-dev-notes/          ← frontend (this repo)
+gunyaluck-dev-notes-backend/  ← backend (separate repo)
 ```
 
+**Backend layers:** `routes → controllers → services → repositories`
+
+**Main API endpoints:**
+
+| Endpoint | Description |
+|----------|-------------|
+| `/auth` | Login, register, password reset |
+| `/posts` | Article CRUD, draft/publish |
+| `/categories` | Category management |
+| `/notifications` | User notifications |
+| `/statuses` | Post status management |
+
 ---
 
-## Frontend Setup (this repo)
+## Local Development
 
-### Install dependencies
+### Prerequisites
+
+- Node.js 20+
+- PostgreSQL (or Supabase project)
+
+### 1. Clone both repos
+
+```bash
+git clone https://github.com/<your-username>/gunyaluck-dev-notes
+git clone https://github.com/<your-username>/gunyaluck-dev-notes-backend
+```
+
+### 2. Backend setup
+
+```bash
+cd gunyaluck-dev-notes-backend
+npm install
+```
+
+Create `.env`:
+
+```bash
+DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
+SUPABASE_URL=https://<your-project>.supabase.co
+SUPABASE_ANON_KEY=<your-anon-key>
+PORT=3000
+```
+
+```bash
+npm run start
+# Running at http://localhost:3000
+```
+
+### 3. Frontend setup
 
 ```bash
 cd gunyaluck-dev-notes
 npm install
 ```
 
-### Environment variables (Frontend)
-
-Create a `.env` file in `gunyaluck-dev-notes` (do **not** commit real secrets) and set, for example:
+Copy `.env.example` to `.env` and adjust if needed:
 
 ```bash
-VITE_API_BASE_URL=http://localhost:3000
+cp .env.example .env
 ```
 
-`VITE_API_BASE_URL` is the base URL of the backend API and should match the Express backend port below.
+Example:
 
-### Run the frontend
+```bash
+VITE_API_BASE_URL=http://localhost:3000/api
+```
 
 ```bash
 npm run dev
+# Running at http://localhost:5173 (see vite.config.js for port)
 ```
-
-By default, Vite runs at `http://localhost:5173` (see `vite.config.js` → `server.port`). The API backend uses port `3000` separately.
 
 ---
 
-## Backend Setup (`gunyaluck-dev-notes-backend`)
+## Deployment
 
-### Install dependencies
+**Frontend** — Vercel (originally) → migrated to Ubuntu server with Nginx + PM2  
+**Backend** — Ubuntu server, managed via PM2 (`ecosystem.config.cjs`)  
+**CI/CD** — GitHub Actions: build → SCP dist to server → SSH pm2 restart
+
+Environment variables are injected at build time via GitHub Actions Secrets (`VITE_*`).
+
+---
+
+## Key Challenges
+
+**Case sensitivity (Windows → Linux)**  
+Developed on Windows (case-insensitive filesystem), deployed on Linux (case-sensitive).  
+Import paths like `./Profile` worked locally but failed on Vercel/Ubuntu.  
+Fixed by resetting Git tracking (`git rm --cached`) and enforcing consistent file naming convention.
+
+**Self-hosted deployment**  
+Migrated from Vercel to a real Ubuntu server — configured Nginx as reverse proxy, PM2 for process management, and GitHub Actions for automated deployment pipeline.
+
+---
+
+## Scripts
+
+**Frontend**
 
 ```bash
-cd gunyaluck-dev-notes-backend
-npm install
+npm run dev      # start dev server (port 5173)
+npm run build    # production build
+npm run preview  # preview build (port 4173)
+npm run lint     # ESLint
 ```
 
-### Environment variables (Backend)
-
-Create a `.env` file in `gunyaluck-dev-notes-backend` and define (example keys actually used in the project – **do not put real production secrets in the README or commits**):
+**Backend**
 
 ```bash
-DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
-SUPABASE_URL=https://<your-supabase-project>.supabase.co
-SUPABASE_ANON_KEY=<your-supabase-anon-key>
-PORT=3000
+npm run start    # start Express server (port 3000)
 ```
 
-Notes:
-
-- **DATABASE_URL**: PostgreSQL connection string
-- **SUPABASE_URL / SUPABASE_ANON_KEY**: used to connect to Supabase
-- **PORT**: Express server port (default in code is 3000)
-
-### Run the backend (development)
-
-```bash
-cd gunyaluck-dev-notes-backend
-npm run start
-```
-
-The server will run at `http://localhost:3000` (or the value of `PORT`) and exposes simple health endpoints:
-
-- `GET /` – basic server check
-- `GET /health` – database connectivity check
+Health checks: `GET /` and `GET /health`
 
 ---
 
-## Running the Full Stack Locally
+## What I'd Improve Next
 
-1. **Start the backend first**
-   - Open a terminal in `gunyaluck-dev-notes-backend`
-   - Configure `.env`, run `npm install` (first time only), then `npm run start`
-2. **Start the frontend**
-   - Open a new terminal in `gunyaluck-dev-notes`
-   - Configure `.env` so `VITE_API_BASE_URL` points to the backend (for example `http://localhost:3000`)
-   - Run `npm install` (first time only) and then `npm run dev`
-3. Open `http://localhost:5173` in your browser to use the app.
+- [ ] Add TypeScript for type safety
+- [ ] Write unit and integration tests (Vitest)
+- [ ] Migrate to SSR/SSG (Next.js) for better SEO
+- [ ] Add error monitoring (Sentry)
+- [ ] Complete comment and like system on backend
 
 ---
 
-## Common Scripts
-
-### Frontend (`gunyaluck-dev-notes`)
-
-- `npm run dev` – start Vite development server
-- `npm run build` – build production bundle
-- `npm run preview` – preview the production build (default listen **4173** in `vite.config.js`, so it does not clash with the API on **3000**; PM2/nginx should target the same preview port)
-- `npm run lint` – run ESLint on the codebase
-
-### Backend (`gunyaluck-dev-notes-backend`)
-
-- `npm run start` – start the Express server (`app.mjs`)
-
----
-
-## Deployment (High-Level Overview)
-
-- **Frontend**: Can be deployed on Vercel / Netlify using Vite’s build output (`npm run build`). Configure `VITE_API_BASE_URL` to point to the production backend URL.
-- **Backend**: Can be deployed on any Node.js platform (e.g. Railway, Render, your own server) that supports Node.js + PostgreSQL. Configure `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `PORT` as environment variables.
-
----
-
-## Development Notes
-
-- Do not commit `.env` files for either frontend or backend (keep secrets and connection strings in environment configuration only).
-- If you change the backend port, update `VITE_API_BASE_URL` to match.
-- When adding new backend endpoints, make sure to update the corresponding API calls in the frontend.
-
----
-
-## Screenshots (Optional)
-
-You can showcase the UI by adding images here, for example:
-
-```markdown
-![Landing page screenshot](./docs/screenshots/landing.png)
-![Article detail screenshot](./docs/screenshots/article-detail.png)
-![Admin dashboard screenshot](./docs/screenshots/admin-dashboard.png)
-```
-
-Create a `docs/screenshots` folder and drop your images there, then update the paths as needed.
+*Built by Gunyaluck · Full-stack Developer*
