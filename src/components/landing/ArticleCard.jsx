@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { formatDate } from "../../lib/utils";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchArticlesData = async (pageNum = 1, append = false) => {
+  const fetchArticlesData = useCallback(async (pageNum = 1, append = false) => {
     try {
       const categoryParam = selectedCategory === "All" ? undefined : selectedCategory;
 
@@ -53,7 +53,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -61,7 +61,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
     setPage(1);
     setDisplayCount(6);
     setHasMore(true);
-  }, [selectedCategory]);
+  }, [selectedCategory, fetchArticlesData]);
 
   const handleLoadMore = async () => {
     setIsLoadingMore(true);

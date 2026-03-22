@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { formatDate, formatDateTime } from "../../lib/utils";
 import Markdown from "react-markdown";
 import { Smile } from "lucide-react";
@@ -27,7 +27,21 @@ export function ArticleContent({ id }) {
     const { isAuthenticated, user } = useAuth();
     const isLoggedIn = isAuthenticated;
     
-    const fetchArticleContent = async () => {
+    const mapComment = useCallback((c) => ({
+        id: c.id,
+        parent_id:
+            c.parent_id ??
+            c.parentId ??
+            c.parent_comment_id ??
+            c.parentCommentId ??
+            null,
+        author: c.name ?? c.author_name ?? c.authorName ?? c.user_name ?? c.userName ?? c.author ?? "User",
+        authorAvatar: c.profile_pic ?? c.author_avatar ?? c.authorAvatar ?? c.user_avatar ?? c.userAvatar ?? c.profilePic ?? null,
+        date: c.created_at ?? c.date ?? new Date().toISOString(),
+        content: c.comment_text ?? c.commentText ?? c.content ?? "",
+    }), []);
+
+    const fetchArticleContent = useCallback(async () => {
         if (!id) return;
 
         setIsLoading(true);
@@ -54,21 +68,7 @@ export function ArticleContent({ id }) {
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const mapComment = (c) => ({
-        id: c.id,
-        parent_id:
-            c.parent_id ??
-            c.parentId ??
-            c.parent_comment_id ??
-            c.parentCommentId ??
-            null,
-        author: c.name ?? c.author_name ?? c.authorName ?? c.user_name ?? c.userName ?? c.author ?? "User",
-        authorAvatar: c.profile_pic ?? c.author_avatar ?? c.authorAvatar ?? c.user_avatar ?? c.userAvatar ?? c.profilePic ?? null,
-        date: c.created_at ?? c.date ?? new Date().toISOString(),
-        content: c.comment_text ?? c.commentText ?? c.content ?? "",
-    });
+    }, [id, mapComment]);
 
     const buildTree = (comments) => {
         if (!Array.isArray(comments) || comments.length === 0) return [];
@@ -94,7 +94,7 @@ export function ArticleContent({ id }) {
 
     const commentTree = useMemo(() => buildTree(comments), [comments]);
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         if (!id) return;
 
         setCommentsLoading(true);
@@ -116,9 +116,9 @@ export function ArticleContent({ id }) {
         } finally {
             setCommentsLoading(false);
         }
-    };
+    }, [id, mapComment]);
 
-    const fetchLikes = async () => {
+    const fetchLikes = useCallback(async () => {
         if (!id) return;
         try {
             const token = localStorage.getItem("token");
@@ -138,7 +138,7 @@ export function ArticleContent({ id }) {
         } catch (err) {
             console.error("Error fetching likes:", err);
         }
-    };
+    }, [id]);
 
     const handleLikeClick = async () => {
         if (!isLoggedIn) {
@@ -187,19 +187,19 @@ export function ArticleContent({ id }) {
 
     useEffect(() => {
         fetchArticleContent();
-    }, [id]);
+    }, [fetchArticleContent]);
 
     useEffect(() => {
         if (id) {
             fetchComments();
         }
-    }, [id]);
+    }, [id, fetchComments]);
 
     useEffect(() => {
         if (id) {
             fetchLikes();
         }
-    }, [id]);
+    }, [id, fetchLikes]);
 
     if (isLoading) {
         return (
