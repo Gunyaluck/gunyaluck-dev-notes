@@ -1,3 +1,8 @@
+# Production build ต้องมี VITE_* ตอน npm run build (ฝังใน bundle)
+# ตั้งค่า: Repo → Settings → Secrets and variables → Actions
+#   - Variables หรือ Secrets: VITE_API_BASE_URL (เช่น https://pjsdf.online/api)
+#   ลำดับด้านล่าง: ถ้ามี Secret ใช้ Secret; ไม่มีจึงใช้ Variable
+
 name: CI & Deploy
 
 on:
@@ -27,6 +32,8 @@ jobs:
         run: npm run lint
 
       - name: Build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || vars.VITE_API_BASE_URL }}
         run: npm run build
 
       # === Deploy: copy files to Ubuntu server ===

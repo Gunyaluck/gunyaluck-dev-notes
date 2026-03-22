@@ -8,8 +8,7 @@ import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { DeleteArticleModal } from "../../components/admin/ArticleManagement/DeleteArticleModal.jsx";
 import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function ArticleManagementPage() {
   const navigate = useNavigate();

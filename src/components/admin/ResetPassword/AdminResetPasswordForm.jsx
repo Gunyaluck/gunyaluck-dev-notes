@@ -1,16 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../common/Button";
 import { Input } from "../../ui/input";
 import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function AdminResetPasswordForm() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -105,10 +102,10 @@ export function AdminResetPasswordForm() {
       });
       setErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
       toast.success("Password updated", {
-        description: "Your password has been changed successfully",
+        description:
+          "You stay signed in on this device. Use your new password the next time you log in.",
         duration: 5000,
       });
-      navigate("/admin/reset-password");
     } catch (error) {
       console.error("Error updating password:", error);
       const message = error.response?.data?.error || error.response?.data?.message || "Failed to update password";

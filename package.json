@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "preview:pm2": "serve dist -s -l tcp://0.0.0.0:4173"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.2.6",
@@ -23,6 +24,7 @@
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.12.0",
+    "serve": "^14.2.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18"

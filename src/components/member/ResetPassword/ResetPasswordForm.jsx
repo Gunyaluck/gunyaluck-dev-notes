@@ -7,8 +7,7 @@ import { ErrorMessage } from "../../auth/ErrorMessage";
 import { ResetPasswordConfirm } from "../../common/ResetPasswordConfirm";
 import { useAuth } from "../../../contexts/authentication";
 import { showSuccessToast } from "../../common/Toast";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function ResetPasswordForm() {
   const { user } = useAuth();
@@ -91,7 +90,11 @@ export function ResetPasswordForm() {
         confirmPassword: "",
       });
       setErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
-      showSuccessToast("Password updated", "Your password has been changed successfully", true);
+      showSuccessToast(
+        "Password updated",
+        "You stay signed in on this device. Use your new password the next time you log in.",
+        true
+      );
       navigate("/profile");
     } catch (error) {
       const message = error.response?.data?.error || "Failed to update password";

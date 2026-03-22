@@ -10,6 +10,7 @@ import { LoadingSpinner } from "../common/LoadingSpinner";
 import axios from "axios";
 import { toast } from "sonner";
 import { useAuth } from "../../contexts/authentication";
+import { API_BASE_URL } from "@/config/env";
 
 export function ArticleContent({ id }) {
     const [article, setArticle] = useState(null);
@@ -23,7 +24,6 @@ export function ArticleContent({ id }) {
     const [likeLoading, setLikeLoading] = useState(false);
     const [showAlertCreateAccount, setShowAlertCreateAccount] = useState(false);
     const [openReplyBox, setOpenReplyBox] = useState(null);
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const { isAuthenticated, user } = useAuth();
     const isLoggedIn = isAuthenticated;
     
@@ -247,7 +247,7 @@ export function ArticleContent({ id }) {
             <div className="w-full max-w-7xl mx-auto px-4">
                 <div className="flex flex-col lg:flex-row lg:gap-8 lg:items-start lg:w-[1200px] lg:mx-auto">
                     {/* Main Content - Left Side */}
-                    <div className="w-full lg:flex-1 flex flex-col">
+                    <div className="w-full min-w-0 lg:flex-1 flex flex-col">
                         <div className="flex flex-col gap-6 pt-6 lg:pt-12">
                             {/* Category Tag and Date - Below image */}
                             <div className="flex items-center justify-start gap-4">
@@ -273,7 +273,7 @@ export function ArticleContent({ id }) {
 
                             {/* Article Content */}
                             {article.content && (
-                                <div className="markdown body-1-brown-600 whitespace-pre-wrap leading-relaxed">
+                                <div className="markdown body-1-brown-600 min-w-0 max-w-full whitespace-pre-wrap leading-relaxed">
                                     <Markdown>{article.content}</Markdown>
                                 </div>
                             )}

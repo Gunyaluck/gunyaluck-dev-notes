@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { formatDateTime } from "../../lib/utils";
 import { useAuth } from "../../contexts/authentication";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
+import { Button } from "../common/Button";
 
 function getMessageFromType(type) {
     switch (type) {
@@ -23,10 +23,11 @@ function getMessageFromType(type) {
     }
 }
 
-export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
+export function NotificationDropdown({ isOpen, onClose, onUnreadCountChange }) {
     const { user, isAuthenticated } = useAuth();
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [markingAll, setMarkingAll] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,17 +44,25 @@ export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
                 if (cancelled) return;
                 const list = Array.isArray(res.data) ? res.data : [];
                 setNotifications(list);
-                const hasUnread = list.some((n) => !n.is_read);
-                if (onHasUnread) onHasUnread(hasUnread);
+                const unread = list.filter((n) => !n.is_read).length;
+                onUnreadCountChange?.(unread);
             })
             .catch(() => {
-                if (!cancelled) setNotifications([]);
+                if (!cancelled) {
+                    setNotifications([]);
+                    onUnreadCountChange?.(0);
+                }
             })
             .finally(() => {
                 if (!cancelled) setLoading(false);
             });
         return () => { cancelled = true; };
-    }, [isOpen, isAuthenticated]);
+    }, [isOpen, isAuthenticated, user]);
+
+    const unreadCount = useMemo(
+        () => notifications.filter((n) => !n.is_read).length,
+        [notifications]
+    );
 
     if (!isOpen) return null;
 
@@ -68,7 +77,6 @@ export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
             post_id: n.post_id,
             is_read: n.is_read,
         }))
-        // เรียงตามเวลาใหม่สุดอยู่บนเสมอ ไม่ว่าจะเป็น like/comment/reply
         .sort((a, b) => {
             const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
             const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -91,6 +99,31 @@ export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
         return formatDateTime(timestamp);
     };
 
+    const handleMarkAllAsRead = async (e) => {
+        e.stopPropagation();
+        const token = localStorage.getItem("token");
+        if (!token || unreadCount === 0) return;
+        const unread = notifications.filter((n) => !n.is_read);
+        setMarkingAll(true);
+        try {
+            await Promise.all(
+                unread.map((n) =>
+                    axios.patch(
+                        `${API_BASE_URL}/notifications/mark-as-read/${n.id}`,
+                        {},
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    )
+                )
+            );
+            setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+            onUnreadCountChange?.(0);
+        } catch (err) {
+            console.error("Failed to mark all as read:", err);
+        } finally {
+            setMarkingAll(false);
+        }
+    };
+
     const handleNotificationClick = async (item) => {
         if (!item.is_read) {
             const token = localStorage.getItem("token");
@@ -101,11 +134,13 @@ export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
                         {},
                         { headers: { Authorization: `Bearer ${token}` } }
                     );
-                    setNotifications((prev) =>
-                        prev.map((n) => (n.id === item.id ? { ...n, is_read: true } : n))
-                    );
-                    const stillUnread = notifications.some((n) => n.id !== item.id && !n.is_read);
-                    if (onHasUnread) onHasUnread(stillUnread);
+                    setNotifications((prev) => {
+                        const next = prev.map((n) =>
+                            n.id === item.id ? { ...n, is_read: true } : n
+                        );
+                        onUnreadCountChange?.(next.filter((n) => !n.is_read).length);
+                        return next;
+                    });
                 } catch (err) {
                     console.error("Failed to mark notification as read:", err);
                 }
@@ -118,8 +153,31 @@ export function NotificationDropdown({ isOpen, onClose, onHasUnread }) {
     return (
         <>
             <div className="fixed inset-0 z-60" onClick={onClose} aria-hidden="true" />
-            <div className="absolute top-full right-[-23px] mt-2 z-60 w-[343px] bg-white rounded-lg shadow-lg border border-brown-100 lg:right-0 max-h-[400px] overflow-y-auto">
-                <div className="px-4 py-3 flex flex-col gap-4">
+            <div className="absolute top-full right-[-23px] mt-2 z-60 w-[343px] bg-white rounded-lg shadow-lg border border-brown-100 lg:right-0 max-h-[400px] flex flex-col overflow-hidden">
+                <div
+                    className="px-4 py-3 border-b border-brown-100 flex items-start justify-between gap-2 shrink-0"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="min-w-0">
+                        <h2 className="body-1-brown-600 font-semibold">Notifications</h2>
+                        {unreadCount > 0 && (
+                            <p className="body-3 text-brown-400 mt-0.5">
+                                {unreadCount} unread
+                            </p>
+                        )}
+                    </div>
+                    <Button
+                        type="button"
+                        variant="text"
+                        size="auto"
+                        disabled={unreadCount === 0 || loading || markingAll}
+                        onClick={handleMarkAllAsRead}
+                        className="shrink-0 body-3 text-brand-green hover:text-brown-600 no-underline!"
+                    >
+                        {markingAll ? "Marking…" : "Mark all as read"}
+                    </Button>
+                </div>
+                <div className="px-4 py-3 flex flex-col gap-4 overflow-y-auto max-h-[320px]">
                     {loading ? (
                         <p className="body-2 text-brown-400">Loading...</p>
                     ) : displayList.length === 0 ? (

@@ -9,8 +9,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { API_BASE_URL } from "@/config/env";
 
 export function CategoryTab({ selectedCategory, onCategoryChange }) {
   const [categories, setCategories] = useState([]);
