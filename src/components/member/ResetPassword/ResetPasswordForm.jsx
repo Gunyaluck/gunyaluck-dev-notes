@@ -90,7 +90,11 @@ export function ResetPasswordForm() {
         confirmPassword: "",
       });
       setErrors({ currentPassword: "", newPassword: "", confirmPassword: "" });
-      showSuccessToast("Password updated", "Your password has been changed successfully", true);
+      showSuccessToast(
+        "Password updated",
+        "You stay signed in on this device. Use your new password the next time you log in.",
+        true
+      );
       navigate("/profile");
     } catch (error) {
       const message = error.response?.data?.error || "Failed to update password";

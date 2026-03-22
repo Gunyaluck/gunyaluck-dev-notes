@@ -141,7 +141,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
           </div>
 
           {/* Article Content */}
-          <div className="flex flex-col gap-4 px-4 pb-4"
+          <div className="flex flex-col gap-4 pb-4"
           >
             {/* Category Tag */}
             <div className="w-fit">

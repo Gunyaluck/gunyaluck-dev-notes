@@ -4,6 +4,7 @@ import { User, RotateCcw, LogOut, Bell, SquareArrowOutUpRight } from "lucide-rea
 import { useNavigate } from "react-router-dom";
 import { Button } from "../common/Button";
 import { NotificationDropdown } from "./NotificationDropdown";
+import { NotificationCountBadge } from "./NotificationCountBadge";
 import { useAuth } from "../../contexts/authentication";
 import { API_BASE_URL } from "@/config/env";
 
@@ -11,12 +12,13 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
-  const [hasNotifications, setHasNotifications] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
 
   const isAdmin = showAdminPanel || !!admin;
 
   useEffect(() => {
     if (!isAuthenticated) {
+      setUnreadNotificationCount(0);
       return;
     }
     const token = localStorage.getItem("token");
@@ -25,9 +27,9 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
       .get(`${API_BASE_URL}/notifications`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         const list = Array.isArray(res.data) ? res.data : [];
-        setHasNotifications(list.some((n) => !n.is_read));
+        setUnreadNotificationCount(list.filter((n) => !n.is_read).length);
       })
-      .catch(() => setHasNotifications(false));
+      .catch(() => setUnreadNotificationCount(0));
   }, [isAuthenticated]);
 
   const displayUser = isAdmin ? {
@@ -102,25 +104,28 @@ export function UserDropDown({ admin, onClose, onLogout, hideBell = false, showA
             <Button
               variant="icon"
               size="icon-lg"
-              className="w-12 h-12 bg-white border border-brown-300 hover:bg-brown-100 shrink-0"
-              aria-label="Notifications"
+              className="relative w-12 h-12 bg-white border border-brown-300 hover:bg-brown-100 shrink-0"
+              aria-label={
+                unreadNotificationCount > 0
+                  ? `Notifications, ${unreadNotificationCount} unread`
+                  : "Notifications"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setShowNotificationDropdown(!showNotificationDropdown);
               }}
             >
               <Bell className="w-5 h-5 text-brown-600" />
+              {!showNotificationDropdown && (
+                <NotificationCountBadge count={unreadNotificationCount} />
+              )}
             </Button>
-            {/* Red notification dot - Hide when dropdown is open */}
-            {hasNotifications && !showNotificationDropdown && (
-              <div className="absolute top-1 right-0.5 w-2 h-2 bg-brand-red rounded-full"></div>
-            )}
-            
+
             {/* Notification Dropdown */}
             <NotificationDropdown
               isOpen={showNotificationDropdown}
               onClose={() => setShowNotificationDropdown(false)}
-              onHasUnread={setHasNotifications}
+              onUnreadCountChange={setUnreadNotificationCount}
             />
           </div>
         )}

@@ -208,6 +208,42 @@ body {
 .markdown {
   font-size: 16px;
   font-weight: 400;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* บล็อกโค้ด — เลื่อนแนวนอนในขอบการ์ด ไม่ล้นหน้าจอ */
+.markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 1.25em 0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-brown-200);
+  -webkit-overflow-scrolling: touch;
+}
+
+.markdown pre code {
+  display: block;
+  padding: 0;
+  font-size: 0.875em;
+  line-height: 1.5;
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+  background: transparent;
+}
+
+/* โค้ด inline — ตัดคำยาวใน paragraph */
+.markdown :not(pre) > code {
+  padding: 0.125em 0.35em;
+  border-radius: 0.25rem;
+  background-color: var(--color-brown-200);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .markdown :is(h2) {
