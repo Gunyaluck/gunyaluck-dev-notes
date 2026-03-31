@@ -2,6 +2,7 @@
 import { Linkedin, Github } from 'lucide-react';
 
 export function Footer() {
+  const resumeHref = "/Gunyaluck_Surabandidtip_23-3-69-v2.pdf";
   return (
     <footer className="w-full h-[152px] bg-brown-200 lg:h-[144px]">
       <div className="w-full h-[48px] px-4 py-10 flex flex-col items-center justify-around gap-6 lg:h-[80px] lg:px-30 lg:py-15 lg:flex-row lg:justify-between lg:items-center">
@@ -25,9 +26,10 @@ export function Footer() {
             >
               <Github className="w-4 h-4 text-white" />
             </a>
-            {/* Google Icon */}
+            {/* CV Icon */}
             <a
-              href="#"
+              href={resumeHref}
+              download
               className="w-6 h-6 rounded-full bg-brown-500 flex items-center justify-center hover:bg-brown-500 transition-colors"
               aria-label="Resume"
             >

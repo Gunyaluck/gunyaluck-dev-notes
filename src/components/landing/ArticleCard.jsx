@@ -122,7 +122,7 @@ export function ArticleCard({ selectedCategory, searchQuery }) {
       {Array.isArray(displayedArticles) && displayedArticles.length > 0 && displayedArticles.map((article) => (
         <article
           key={article.id}
-          className="group w-full bg-white rounded-lg flex flex-col gap-4 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]"
+          className="px-6 py-2 group w-full bg-white rounded-lg flex flex-col gap-4 overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]"
           onClick={() => navigate(`/post/${article.id}`)}
         >
           {/* Article Image */}
